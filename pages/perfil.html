@@ -39,13 +39,17 @@
               <option value="outro">Outro</option>
             </select>
           </div>
-          <div class="form-group">
+          <div class="form-group span2">
             <label class="form-label" for="altura_cm">Altura (cm)</label>
             <input class="input" type="number" id="altura_cm" min="100" max="250" placeholder="175" required>
           </div>
           <div class="form-group">
-            <label class="form-label" for="peso_kg">Peso (kg)</label>
+            <label class="form-label" for="peso_kg">Peso atual (kg)</label>
             <input class="input" type="number" id="peso_kg" step="0.1" min="30" max="300" placeholder="80" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="peso_objetivo_kg">Peso-objetivo (kg) <span class="label-opcional">(opcional)</span></label>
+            <input class="input" type="number" id="peso_objetivo_kg" step="0.1" min="30" max="300" placeholder="75">
           </div>
         </div>
       </div>
@@ -91,6 +95,10 @@
             </select>
           </div>
           <div class="form-group">
+            <label class="form-label" for="duracao_sessao_min">Duração da sessão (min)</label>
+            <input class="input" type="number" id="duracao_sessao_min" min="20" max="180" placeholder="60" required>
+          </div>
+          <div class="form-group span2">
             <label class="form-label" for="local_treino">Local de treino</label>
             <select class="input" id="local_treino" required>
               <option value="">—</option>

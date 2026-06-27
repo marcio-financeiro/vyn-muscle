@@ -53,9 +53,11 @@ function coletarCampos() {
     objetivo:                document.getElementById('objetivo').value                           || null,
     experiencia:             document.getElementById('experiencia').value                        || null,
     disponibilidade_semanal: parseInt(document.getElementById('disponibilidade_semanal').value)  || null,
+    duracao_sessao_min:      parseInt(document.getElementById('duracao_sessao_min').value)       || null,
     local_treino:            document.getElementById('local_treino').value                       || null,
     equipamentos:            document.getElementById('equipamentos').value.trim()                || null,
     restricoes:              document.getElementById('restricoes').value.trim()                  || null,
+    peso_objetivo_kg:        parseFloat(document.getElementById('peso_objetivo_kg').value)       || null,
   };
 }
 
@@ -68,9 +70,11 @@ function preencherForm(perfil) {
   set('objetivo',                perfil.objetivo);
   set('experiencia',             perfil.experiencia);
   set('disponibilidade_semanal', perfil.disponibilidade_semanal);
+  set('duracao_sessao_min',      perfil.duracao_sessao_min);
   set('local_treino',            perfil.local_treino);
   set('equipamentos',            perfil.equipamentos);
   set('restricoes',              perfil.restricoes);
+  set('peso_objetivo_kg',        perfil.peso_objetivo_kg);
   document.getElementById('btn-salvar').textContent = 'Atualizar';
 }
 

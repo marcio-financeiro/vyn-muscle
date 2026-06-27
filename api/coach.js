@@ -132,9 +132,16 @@ function montarPerfilTexto(perfil) {
   if (perfil.objetivo)                partes.push(`objetivo: ${perfil.objetivo}`);
   if (perfil.experiencia)             partes.push(`experiência: ${perfil.experiencia}`);
   if (perfil.disponibilidade_semanal) partes.push(`treina ${perfil.disponibilidade_semanal}x/semana`);
+  if (perfil.duracao_sessao_min)      partes.push(`sessões de ${perfil.duracao_sessao_min} min`);
   if (perfil.local_treino)            partes.push(`local: ${perfil.local_treino}`);
   if (perfil.equipamentos)            partes.push(`equipamentos: ${perfil.equipamentos}`);
   if (perfil.restricoes)              partes.push(`restrições: ${perfil.restricoes}`);
+  if (perfil.peso_objetivo_kg) {
+    const metaStr = perfil.peso_kg
+      ? `meta de peso: ${perfil.peso_objetivo_kg}kg (atual: ${perfil.peso_kg}kg)`
+      : `meta de peso: ${perfil.peso_objetivo_kg}kg`;
+    partes.push(metaStr);
+  }
   return partes.length ? `Perfil do usuário: ${partes.join(', ')}.` : '';
 }
 
