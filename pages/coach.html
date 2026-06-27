@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vyn Muscle — Coach</title>
+  <link rel="stylesheet" href="../css/app.css">
+</head>
+<body class="papel-log page">
+
+  <header class="topbar">
+    <div class="marca">
+      <span class="marca-vyn">VYN</span>
+      <span class="marca-muscle">MUSCLE</span>
+    </div>
+    <button class="btn-sair" id="btn-sair">Sair</button>
+  </header>
+
+  <nav class="nav-abas" aria-label="Navegação principal">
+    <a class="nav-aba" href="./hoje.html">Hoje</a>
+    <a class="nav-aba" href="./historico.html">Histórico</a>
+    <a class="nav-aba ativa" href="./coach.html" aria-current="page">Coach</a>
+  </nav>
+
+  <main class="conteudo">
+    <!-- Mockup do brand book — UI do Coach (Semana 3 vai substituir com IA real) -->
+    <div class="linha-log">
+      <span class="ex">Agachamento — últimas 3 sessões</span>
+      <span class="carga">↑ carga</span>
+      <span class="rpe">↑ RPE</span>
+    </div>
+    <div class="anotacao-ia">
+      <span class="tag">Anotação da IA</span>
+      Carga subindo, mas RPE também. Próxima sessão: mantenha 120kg e teste 5×5 em vez de subir peso.
+    </div>
+    <p class="coach-placeholder">
+      O Coach analisa seu histórico e sugere ajustes.<br>Disponível em breve.
+    </p>
+  </main>
+
+  <script type="module" src="../js/coach.js"></script>
+</body>
+</html>
