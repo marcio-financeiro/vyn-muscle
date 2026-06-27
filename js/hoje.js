@@ -1,5 +1,6 @@
 // js/hoje.js
-import { getSession, signOut } from './services/authService.js';
+import { exigirSessao } from './lib/authGuard.js';
+import { logout } from './services/authService.js';
 import { logSerie, getHoje } from './services/treinoService.js';
 
 function renderLinha(log, prepend = false) {
@@ -43,13 +44,10 @@ async function carregarHoje() {
 }
 
 async function init() {
-  const session = await getSession();
-  if (!session) { location.replace('./login.html'); return; }
+  const session = await exigirSessao();
+  if (!session) return;
 
-  document.getElementById('btn-sair').addEventListener('click', async () => {
-    await signOut();
-    location.replace('./login.html');
-  });
+  document.getElementById('btn-sair').addEventListener('click', logout);
 
   const btnAdicionar = document.getElementById('btn-adicionar');
   const formSerie    = document.getElementById('form-serie');

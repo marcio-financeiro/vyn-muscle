@@ -32,6 +32,11 @@ export async function signOut() {
   await supabase.auth.signOut();
 }
 
+export async function logout() {
+  await supabase.auth.signOut();
+  window.location.href = '/pages/login.html';
+}
+
 export async function getSession() {
   const { data } = await supabase.auth.getSession();
   return data.session;
