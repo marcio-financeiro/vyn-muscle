@@ -23,13 +23,9 @@ export async function loginComEmail(email, senha) {
 
 export async function cadastrarComEmail(email, senha) {
   const { data, error } = await supabase.auth.signUp({ email, password: senha });
-  if (error) {
-    if (error.message.includes('already registered') || error.message.includes('User already registered')) {
-      throw new Error('Este e-mail já está cadastrado. Tente fazer login.');
-    }
-    throw new Error('Não foi possível criar a conta. Tente novamente.');
-  }
-  return data;
+  if (error) return { sucesso: false, mensagem: error.message };
+  const sessaoAtiva = !!data.session;
+  return { sucesso: true, sessaoAtiva, usuario: data.user };
 }
 
 export async function signOut() {
