@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Vyn Muscle</title>
+  <script type="module">
+    import { getSession } from './js/services/authService.js';
+    const session = await getSession();
+    location.replace(session ? './pages/hoje.html' : './pages/login.html');
+  </script>
+</head>
+<body></body>
+</html>
