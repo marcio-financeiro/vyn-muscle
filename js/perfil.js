@@ -2,13 +2,15 @@ import { exigirSessao } from './lib/authGuard.js';
 import { logout } from './services/authService.js';
 import { getPerfil, salvarPerfil } from './services/perfilService.js';
 
-const CAMPOS_OBRIGATORIOS = ['idade', 'sexo', 'altura_cm', 'peso_kg', 'objetivo', 'experiencia', 'disponibilidade_semanal', 'local_treino'];
+const CAMPOS_OBRIGATORIOS = ['data_nascimento', 'sexo', 'altura_cm', 'peso_kg', 'objetivo', 'experiencia', 'disponibilidade_semanal', 'duracao_sessao_min', 'local_treino'];
 
 async function init() {
   const session = await exigirSessao();
   if (!session) return;
 
   document.getElementById('btn-sair').addEventListener('click', logout);
+
+  document.getElementById('data_nascimento').max = new Date().toISOString().slice(0, 10);
 
   const { data: perfil } = await getPerfil();
   if (perfil) preencherForm(perfil);
@@ -46,7 +48,7 @@ async function init() {
 
 function coletarCampos() {
   return {
-    idade:                   parseInt(document.getElementById('idade').value)                    || null,
+    data_nascimento:         document.getElementById('data_nascimento').value                   || null,
     sexo:                    document.getElementById('sexo').value                               || null,
     altura_cm:               parseInt(document.getElementById('altura_cm').value)                || null,
     peso_kg:                 parseFloat(document.getElementById('peso_kg').value)                || null,
@@ -63,7 +65,7 @@ function coletarCampos() {
 
 function preencherForm(perfil) {
   const set = (id, val) => { if (val != null) document.getElementById(id).value = val; };
-  set('idade',                   perfil.idade);
+  set('data_nascimento',         perfil.data_nascimento);
   set('sexo',                    perfil.sexo);
   set('altura_cm',               perfil.altura_cm);
   set('peso_kg',                 perfil.peso_kg);

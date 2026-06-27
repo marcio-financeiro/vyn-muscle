@@ -122,10 +122,28 @@ module.exports = async function handler(req, res) {
   return res.status(200).json({ insights });
 };
 
+// Cópia de js/utils/idade.js — CommonJS não permite import de ES modules.
+// Usa new Date(ano, mes, dia) para evitar bug de timezone com strings ISO.
+function calcularIdade(dataNascimentoStr) {
+  if (!dataNascimentoStr) return null;
+  const hoje = new Date();
+  const [ano, mes, dia] = dataNascimentoStr.split('-').map(Number);
+  const nascimento = new Date(ano, mes - 1, dia);
+  let idade = hoje.getFullYear() - nascimento.getFullYear();
+  const aindaNaoFezAniversario =
+    hoje.getMonth() < nascimento.getMonth() ||
+    (hoje.getMonth() === nascimento.getMonth() && hoje.getDate() < nascimento.getDate());
+  if (aindaNaoFezAniversario) idade--;
+  return idade;
+}
+
 function montarPerfilTexto(perfil) {
   if (!perfil) return '';
   const partes = [];
-  if (perfil.idade)                   partes.push(`${perfil.idade} anos`);
+  if (perfil.data_nascimento) {
+    const idade = calcularIdade(perfil.data_nascimento);
+    if (idade !== null) partes.push(`${idade} anos`);
+  }
   if (perfil.sexo)                    partes.push(`sexo: ${perfil.sexo}`);
   if (perfil.altura_cm)               partes.push(`${perfil.altura_cm}cm`);
   if (perfil.peso_kg)                 partes.push(`${perfil.peso_kg}kg`);
