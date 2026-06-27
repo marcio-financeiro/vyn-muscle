@@ -1,0 +1,360 @@
+/* css/app.css — estilos das telas Vyn Muscle.
+   Zero hex literal aqui: toda cor via custom property de tokens.css.
+   Zero nome de fonte direto: tudo via --fonte-display, --fonte-dados, --fonte-leitura.
+*/
+@import url('./tokens.css');
+
+*, *::before, *::after { box-sizing: border-box; }
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+/* ── Focus visível (acessibilidade) ── */
+:focus-visible {
+  outline: 2px solid var(--forja);
+  outline-offset: 2px;
+}
+
+/* ── Layout base ── */
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Topbar ── */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--linha-forte);
+  background: var(--concreto);
+}
+
+.marca {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+/* VYN em Anton, cor Forja, com traço por baixo — assinatura da marca */
+.marca-vyn {
+  font-family: var(--fonte-display);
+  font-size: 22px;
+  color: var(--forja);
+  letter-spacing: 0.5px;
+  position: relative;
+  display: inline-block;
+}
+
+.marca-vyn::after {
+  content: '';
+  position: absolute;
+  left: -2px;
+  bottom: -3px;
+  width: 110%;
+  height: 2px;
+  background: var(--forja);
+  transform: rotate(-1.5deg);
+}
+
+/* MUSCLE em mono, menor, cor Pó — categoria, não disputa com VYN */
+.marca-muscle {
+  font-family: var(--fonte-dados);
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--po);
+  margin-top: 5px;
+}
+
+.btn-sair {
+  font-family: var(--fonte-dados);
+  font-size: 11px;
+  color: var(--po);
+  background: none;
+  border: none;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  padding: 4px 0;
+  transition: color 0.15s;
+}
+.btn-sair:hover { color: var(--cal); }
+
+/* ── Navegação de abas ── */
+.nav-abas {
+  display: flex;
+  border-bottom: 1px solid var(--linha-forte);
+  background: var(--concreto);
+}
+
+.nav-aba {
+  flex: 1;
+  padding: 10px 4px;
+  font-family: var(--fonte-dados);
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--po);
+  text-align: center;
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.nav-aba.ativa,
+.nav-aba:hover {
+  color: var(--cal);
+  border-bottom-color: var(--forja);
+}
+
+/* ── Conteúdo principal ── */
+.conteudo {
+  flex: 1;
+  padding: 18px;
+  max-width: 600px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* ── Linha de log — coração da interface de dados ── */
+.linha-log {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--linha-forte);
+  font-family: var(--fonte-dados);
+  font-size: 13px;
+  gap: 8px;
+}
+.linha-log:last-child { border-bottom: none; }
+.linha-log .ex    { color: var(--cal); flex: 1; min-width: 0; }
+.linha-log .carga { color: var(--cal); font-weight: 600; white-space: nowrap; }
+.linha-log .rpe   { color: var(--po); font-size: 11px; white-space: nowrap; }
+.linha-log .rpe.alto { color: var(--brasa); }
+
+/* ── Cabeçalho de grupo de data (histórico) ── */
+.grupo-data {
+  font-family: var(--fonte-dados);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--po);
+  padding: 14px 0 6px;
+  border-bottom: 1px solid var(--grafite);
+}
+
+/* ── Anotação da IA — uso exclusivo: Forja reservado para este fim ── */
+.anotacao-ia {
+  background: var(--forja-fraca);
+  border-left: 3px solid var(--forja);
+  padding: 12px 14px;
+  transform: rotate(-0.4deg);
+  font-size: 13.5px;
+  line-height: 1.55;
+  margin-top: 14px;
+  color: var(--cal);
+}
+.anotacao-ia .tag {
+  font-family: var(--fonte-dados);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--forja);
+  display: block;
+  margin-bottom: 5px;
+}
+
+/* ── Formulário de nova série ── */
+.form-serie {
+  background: var(--concreto);
+  border: 1px solid var(--linha-forte);
+  padding: 16px;
+  margin-bottom: 16px;
+  display: none;
+}
+.form-serie.visivel { display: block; }
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.form-grid .span2 { grid-column: span 2; }
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.form-label {
+  font-family: var(--fonte-dados);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--po);
+}
+
+.input {
+  background: var(--ferro);
+  border: 1px solid var(--grafite);
+  color: var(--cal);
+  font-family: var(--fonte-dados);
+  font-size: 13px;
+  padding: 8px 10px;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.15s;
+}
+.input:focus { border-color: var(--forja); }
+
+/* ── Botões ── */
+.btn-cta {
+  background: var(--forja);
+  color: var(--cal);
+  border: none;
+  font-family: var(--fonte-dados);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding: 10px 16px;
+  cursor: pointer;
+  width: 100%;
+  transition: opacity 0.15s;
+}
+.btn-cta:hover { opacity: 0.9; }
+.btn-cta:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.btn-secondary {
+  background: none;
+  color: var(--po);
+  border: 1px solid var(--grafite);
+  font-family: var(--fonte-dados);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+.btn-secondary:hover { color: var(--cal); border-color: var(--po); }
+
+.btn-adicionar {
+  font-family: var(--fonte-dados);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--forja);
+  background: none;
+  border: 1px solid var(--forja);
+  padding: 8px 14px;
+  cursor: pointer;
+  margin-bottom: 16px;
+  transition: background 0.15s;
+}
+.btn-adicionar:hover { background: var(--forja-fraca); }
+
+/* ── Estados ── */
+.vazio {
+  font-family: var(--fonte-dados);
+  font-size: 13px;
+  color: var(--po);
+  padding: 24px 0;
+  text-align: center;
+}
+
+.msg-erro {
+  font-family: var(--fonte-dados);
+  font-size: 12px;
+  color: var(--brasa);
+  min-height: 16px;
+  margin: 0;
+}
+
+/* ── Login ── */
+.login-wrap {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.login-card {
+  background: var(--concreto);
+  border: 1px solid var(--linha-forte);
+  padding: 32px 28px;
+  width: 100%;
+  max-width: 360px;
+}
+
+.login-marca {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.login-vyn {
+  font-family: var(--fonte-display);
+  font-size: 36px;
+  color: var(--forja);
+  display: block;
+  line-height: 1;
+}
+
+.login-muscle {
+  font-family: var(--fonte-dados);
+  font-size: 11px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--po);
+  display: block;
+  margin-top: 4px;
+}
+
+.login-title {
+  font-family: var(--fonte-dados);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--po);
+  margin: 0 0 20px;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.link-modo {
+  font-family: var(--fonte-dados);
+  font-size: 12px;
+  color: var(--po);
+  text-align: center;
+  margin-top: 12px;
+}
+.link-modo span {
+  color: var(--cal);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* ── Coach placeholder ── */
+.coach-placeholder {
+  font-family: var(--fonte-leitura);
+  font-size: 14px;
+  color: var(--po);
+  line-height: 1.6;
+  padding: 24px 0;
+  text-align: center;
+  margin-top: 32px;
+}
