@@ -434,6 +434,11 @@
 .btn-google:hover  { background: var(--concreto-2); border-color: var(--grafite); }
 .btn-google:disabled { opacity: 0.45; cursor: not-allowed; }
 
+/* ── Cards do Coach (gerados dinamicamente) ── */
+.card-coach {
+  margin-bottom: 24px;
+}
+
 /* ── Coach placeholder ── */
 .coach-placeholder {
   font-family: var(--fonte-leitura);
