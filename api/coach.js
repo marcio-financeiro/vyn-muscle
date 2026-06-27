@@ -1,6 +1,6 @@
-import { createClient } from '@supabase/supabase-js';
+const { createClient } = require('@supabase/supabase-js');
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ erro: 'Método não permitido' });
   }
@@ -8,6 +8,14 @@ export default async function handler(req, res) {
   const authHeader = req.headers.authorization;
   if (!authHeader) {
     return res.status(401).json({ erro: 'Não autenticado' });
+  }
+
+  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) {
+    return res.status(500).json({ erro: 'Variáveis de ambiente do Supabase não configuradas no Vercel' });
+  }
+
+  if (!process.env.ANTHROPIC_API_KEY) {
+    return res.status(500).json({ erro: 'ANTHROPIC_API_KEY não configurada no Vercel' });
   }
 
   const supabase = createClient(
@@ -21,7 +29,6 @@ export default async function handler(req, res) {
     return res.status(401).json({ erro: 'Sessão inválida' });
   }
 
-  // RLS filtra automaticamente pelo user_id via JWT do usuário
   const { data: logs, error: logsError } = await supabase
     .from('treino_logs')
     .select('*')
@@ -52,14 +59,15 @@ export default async function handler(req, res) {
       'anthropic-version': '2023-06-01',
     },
     body: JSON.stringify({
-      model: 'claude-sonnet-4-6',
+      model: 'claude-haiku-4-5-20251001',
       max_tokens: 1024,
       messages: [{ role: 'user', content: prompt }],
     }),
   });
 
   if (!respostaIA.ok) {
-    return res.status(500).json({ erro: 'Erro ao consultar a IA' });
+    const erroTexto = await respostaIA.text();
+    return res.status(500).json({ erro: 'Erro ao consultar a IA', detalhe: erroTexto.slice(0, 200) });
   }
 
   const dadosIA = await respostaIA.json();
@@ -69,11 +77,11 @@ export default async function handler(req, res) {
   try {
     insights = JSON.parse(textoIA);
   } catch {
-    return res.status(500).json({ erro: 'Resposta da IA em formato inesperado' });
+    return res.status(500).json({ erro: 'Resposta da IA em formato inesperado', raw: textoIA.slice(0, 300) });
   }
 
   return res.status(200).json({ insights });
-}
+};
 
 function montarPrompt(porExercicio) {
   const resumo = Object.entries(porExercicio)

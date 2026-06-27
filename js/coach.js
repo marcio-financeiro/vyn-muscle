@@ -21,7 +21,7 @@ async function carregarInsights(session) {
     const dados = await resp.json();
 
     if (dados.erro) {
-      container.innerHTML = '<p class="vazio">Não foi possível analisar agora. Tenta de novo mais tarde.</p>';
+      container.innerHTML = `<p class="vazio">${dados.erro}</p>`;
       return;
     }
 
