@@ -368,11 +368,53 @@
   text-align: center;
   margin-top: 12px;
 }
-.link-modo span {
+.link-modo span,
+.link-modo a {
   color: var(--cal);
   text-decoration: underline;
   cursor: pointer;
 }
+.link-modo a { text-decoration-color: var(--grafite); }
+
+/* ── Divisor "ou" entre e-mail e OAuth ── */
+.divisor-ou {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--po);
+  font-family: var(--fonte-dados);
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin: 14px 0;
+}
+.divisor-ou::before,
+.divisor-ou::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--linha-forte);
+}
+
+/* ── Botão Google — neutro, sem Forja (Forja é exclusivo da IA) ── */
+.btn-google {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 16px;
+  background: transparent;
+  border: 1px solid var(--linha-forte);
+  color: var(--cal);
+  font-family: var(--fonte-leitura);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.btn-google:hover  { background: var(--concreto-2); border-color: var(--grafite); }
+.btn-google:disabled { opacity: 0.45; cursor: not-allowed; }
 
 /* ── Coach placeholder ── */
 .coach-placeholder {

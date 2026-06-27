@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vyn Muscle — Login</title>
+  <title>Vyn Muscle — Criar conta</title>
   <link rel="stylesheet" href="/css/tokens.css">
   <link rel="stylesheet" href="/css/app.css">
 </head>
@@ -15,19 +15,19 @@
         <div class="marca-sub">MUSCLE</div>
       </div>
 
-      <p class="login-title">Entrar</p>
+      <p class="login-title">Criar conta</p>
 
-      <form class="login-form" id="form-login">
+      <form class="login-form" id="form-cadastro">
         <div class="form-group">
           <label class="form-label" for="email">E-mail</label>
           <input class="input" type="email" id="email" required autocomplete="username">
         </div>
         <div class="form-group">
           <label class="form-label" for="senha">Senha</label>
-          <input class="input" type="password" id="senha" required minlength="6" autocomplete="current-password">
+          <input class="input" type="password" id="senha" required minlength="6" autocomplete="new-password">
         </div>
         <p class="msg-erro" id="msg-erro" role="alert"></p>
-        <button class="btn-cta" type="submit" id="btn-entrar">Entrar</button>
+        <button class="btn-cta" type="submit" id="btn-cadastrar">Criar conta</button>
       </form>
 
       <div class="divisor-ou">ou</div>
@@ -42,9 +42,9 @@
         Continuar com Google
       </button>
 
-      <p class="link-modo">Não tem conta? <a href="./cadastro.html">Criar conta</a></p>
+      <p class="link-modo">Já tem conta? <a href="./login.html">Entrar</a></p>
     </div>
   </div>
-  <script type="module" src="../js/pages/login.js"></script>
+  <script type="module" src="../js/pages/cadastro.js"></script>
 </body>
 </html>
