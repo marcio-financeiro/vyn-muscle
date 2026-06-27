@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vyn Muscle — Histórico</title>
+  <link rel="stylesheet" href="../css/app.css">
+</head>
+<body class="papel-log page">
+
+  <header class="topbar">
+    <div class="marca">
+      <span class="marca-vyn">VYN</span>
+      <span class="marca-muscle">MUSCLE</span>
+    </div>
+    <button class="btn-sair" id="btn-sair">Sair</button>
+  </header>
+
+  <nav class="nav-abas" aria-label="Navegação principal">
+    <a class="nav-aba" href="./hoje.html">Hoje</a>
+    <a class="nav-aba ativa" href="./historico.html" aria-current="page">Histórico</a>
+    <a class="nav-aba" href="./coach.html">Coach</a>
+  </nav>
+
+  <main class="conteudo">
+    <div id="lista-historico" aria-live="polite">
+      <p class="vazio">Carregando...</p>
+    </div>
+  </main>
+
+  <script type="module" src="../js/historico.js"></script>
+</body>
+</html>
