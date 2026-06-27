@@ -10,7 +10,7 @@ module.exports = async function handler(req, res) {
     return res.status(401).json({ erro: 'Não autenticado' });
   }
 
-  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) {
+  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_PUBLISHABLE_KEY) {
     return res.status(500).json({ erro: 'Variáveis de ambiente do Supabase não configuradas no Vercel' });
   }
 
@@ -20,7 +20,7 @@ module.exports = async function handler(req, res) {
 
   const supabase = createClient(
     process.env.SUPABASE_URL,
-    process.env.SUPABASE_ANON_KEY,
+    process.env.SUPABASE_PUBLISHABLE_KEY,
     { global: { headers: { Authorization: authHeader } } }
   );
 
