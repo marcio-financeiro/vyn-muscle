@@ -1,0 +1,55 @@
+/* tokens.css — Vyn Muscle
+   Fonte única de verdade pra cor e tipografia.
+   As 3 telas (Hoje, Histórico, Coach) importam isso. Nenhum hex
+   ou nome de fonte é digitado direto em outro CSS do projeto.
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  /* cor — base */
+  --ferro: #1C1B19;        /* fundo, todas as telas */
+  --concreto: #242220;     /* cards, inputs */
+  --concreto-2: #2C2A26;   /* superfície elevada */
+  --grafite: #3A372F;      /* linhas, divisórias */
+  --linha: rgba(237, 234, 226, 0.055);
+  --linha-forte: rgba(237, 234, 226, 0.09);
+
+  /* cor — acento. Uso restrito: sugestão da IA e CTA principal, nunca decorativo */
+  --forja: #D6451B;
+  --forja-fraca: rgba(214, 69, 27, 0.14);
+
+  /* cor — texto */
+  --cal: #EDEAE2;           /* texto principal */
+  --po: #9A958A;            /* texto secundário, labels, timestamps */
+
+  /* cor — estado */
+  --bronze: #7C8C44;        /* carga subiu, meta batida */
+  --brasa: #A23A20;         /* RPE 9-10, série falhou */
+
+  /* tipografia — 3 papéis (critério de uso de cada um está no brand book) */
+  --fonte-display: 'Anton', sans-serif;
+  --fonte-dados: 'IBM Plex Mono', monospace;
+  --fonte-leitura: 'Inter', sans-serif;
+}
+
+/* utilitários de tipografia — aplica direto no HTML das telas */
+.display { font-family: var(--fonte-display); font-weight: 400; letter-spacing: 0.5px; }
+.mono    { font-family: var(--fonte-dados); }
+.leitura { font-family: var(--fonte-leitura); }
+
+/* textura de fundo tipo papel de log — usar só onde tem dado real de treino */
+.papel-log {
+  background-image:
+    linear-gradient(var(--linha) 1px, transparent 1px),
+    linear-gradient(90deg, var(--linha) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* base mínima — sem reset gigante, fase de validação não pede */
+body {
+  margin: 0;
+  background: var(--ferro);
+  color: var(--cal);
+  font-family: var(--fonte-leitura);
+}
