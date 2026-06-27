@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vyn Muscle — Brand Book</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ferro:#1C1B19;
+    --concreto:#242220;
+    --concreto-2:#2C2A26;
+    --grafite:#3A372F;
+    --linha: rgba(237,234,226,0.055);
+    --linha-forte: rgba(237,234,226,0.09);
+    --forja:#D6451B;
+    --forja-fraca: rgba(214,69,27,0.14);
+    --cal:#EDEAE2;
+    --po:#9A958A;
+    --bronze:#7C8C44;
+    --brasa:#A23A20;
+    --maxw: 760px;
+  }
+
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    margin:0;
+    background:var(--ferro);
+    color:var(--cal);
+    font-family:'Inter',sans-serif;
+    background-image:
+      linear-gradient(var(--linha) 1px, transparent 1px),
+      linear-gradient(90deg, var(--linha) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+
+  .display{font-family:'Anton',sans-serif; font-weight:400; letter-spacing:0.5px;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 22px;}
+
+  section{padding:64px 0 56px; border-bottom:1px solid var(--linha-forte);}
+  section:last-of-type{border-bottom:none;}
+
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    color:var(--forja);
+    margin-bottom:18px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .eyebrow::before{content:'—'; color:var(--forja);}
+
+  h2{
+    font-family:'Anton',sans-serif;
+    font-weight:400;
+    font-size:clamp(22px,5vw,28px);
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    margin:0 0 12px;
+    color:var(--cal);
+  }
+  h3{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    color:var(--po);
+    margin:0 0 10px;
+  }
+  p{line-height:1.6; color:var(--cal); margin:0 0 14px; font-size:15.5px;}
+  .muted{color:var(--po); font-size:14px;}
+
+  ul.lista{list-style:none; margin:0; padding:0;}
+  ul.lista li{
+    padding:8px 0 8px 18px;
+    border-left:2px solid var(--grafite);
+    margin-bottom:2px;
+    font-size:14.5px;
+    color:var(--cal);
+  }
+
+  /* ===== CAPA ===== */
+  .capa{
+    padding:88px 0 70px;
+    text-align:left;
+  }
+  .capa .eyebrow{margin-bottom:28px;}
+  .capa-title{
+    font-family:'Anton',sans-serif;
+    font-weight:400;
+    font-size:clamp(46px,14vw,84px);
+    line-height:0.95;
+    margin:0;
+    color:var(--forja);
+    position:relative;
+    display:inline-block;
+  }
+  .capa-title svg{
+    position:absolute;
+    left:-4%;
+    bottom:-14px;
+    width:108%;
+    height:18px;
+  }
+  .capa-subtag{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13px;
+    letter-spacing:4px;
+    text-transform:uppercase;
+    color:var(--po);
+    margin-top:10px;
+  }
+  .capa-tagline{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:15px;
+    color:var(--cal);
+    margin-top:22px;
+    max-width:380px;
+  }
+  .capa-meta{
+    margin-top:36px;
+    font-size:12px;
+    color:var(--po);
+    text-transform:uppercase;
+    letter-spacing:1px;
+    font-family:'IBM Plex Mono',monospace;
+  }
+
+  /* ===== PERSONALIDADE ===== */
+  .duas-colunas{display:grid; grid-template-columns:1fr; gap:24px; margin-top:8px;}
+  @media(min-width:680px){.duas-colunas{grid-template-columns:1fr 1fr;}}
+  .duas-colunas .bloco h3{margin-bottom:14px;}
+
+  /* ===== PALETA ===== */
+  .paleta-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+    margin-top:8px;
+  }
+  @media(min-width:680px){.paleta-grid{grid-template-columns:1fr 1fr 1fr;}}
+  .swatch{border:1px solid var(--linha-forte);}
+  .swatch .cor{height:72px;}
+  .swatch .info{padding:10px 12px; background:var(--concreto);}
+  .swatch .nome{font-family:'IBM Plex Mono',monospace; font-size:12px; text-transform:uppercase; letter-spacing:0.5px; color:var(--cal);}
+  .swatch .hex{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--po); margin-top:2px;}
+  .swatch .uso{font-size:11.5px; color:var(--po); margin-top:6px; line-height:1.4;}
+
+  /* ===== TIPOGRAFIA ===== */
+  .tipo-bloco{
+    border:1px solid var(--linha-forte);
+    background:var(--concreto);
+    padding:20px 20px 18px;
+    margin-bottom:16px;
+  }
+  .tipo-bloco .papel{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--forja); text-transform:uppercase; letter-spacing:1px; margin-bottom:14px;}
+  .num-grande{
+    font-family:'Anton',sans-serif;
+    font-size:clamp(44px,12vw,64px);
+    line-height:1;
+    color:var(--cal);
+  }
+  .num-grande span{font-size:0.4em; color:var(--po); margin-left:6px;}
+
+  table.ledger{width:100%; border-collapse:collapse; font-family:'IBM Plex Mono',monospace; font-size:12.5px;}
+  table.ledger th{text-align:left; color:var(--po); font-weight:500; padding:6px 8px; border-bottom:1px solid var(--linha-forte); text-transform:uppercase; font-size:10.5px; letter-spacing:0.5px;}
+  table.ledger td{padding:8px 8px; border-bottom:1px solid var(--linha); color:var(--cal);}
+  .rpe-alto{color:var(--brasa); font-weight:600;}
+
+  .coach-msg{
+    font-family:'Inter',sans-serif;
+    font-size:14.5px;
+    line-height:1.6;
+    color:var(--cal);
+  }
+
+  /* ===== LOGO ===== */
+  .logo-area{
+    border:1px solid var(--linha-forte);
+    background:var(--concreto);
+    padding:40px 24px;
+    text-align:center;
+    margin-bottom:18px;
+  }
+  .logo-area .marca{
+    font-family:'Anton',sans-serif;
+    font-size:clamp(32px,9vw,48px);
+    color:var(--forja);
+  }
+  .logo-area .marca-sub{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13px;
+    letter-spacing:4px;
+    text-transform:uppercase;
+    color:var(--po);
+    margin-top:8px;
+  }
+  .marca-pequena{
+    margin-top:18px;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    color:var(--po);
+  }
+  .traco{width:18px; height:3px; background:var(--forja); transform:rotate(-8deg); display:inline-block;}
+
+  /* ===== VOZ ===== */
+  .par-voz{margin-bottom:22px;}
+  .voz-card{
+    border:1px solid var(--linha-forte);
+    padding:14px 16px;
+    margin-bottom:8px;
+  }
+  .voz-card.ok{border-left:3px solid var(--bronze);}
+  .voz-card.evitar{border-left:3px solid var(--brasa); opacity:0.75;}
+  .voz-label{font-family:'IBM Plex Mono',monospace; font-size:10.5px; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;}
+  .voz-card.ok .voz-label{color:var(--bronze);}
+  .voz-card.evitar .voz-label{color:var(--brasa);}
+  .voz-card p{margin:0; font-size:14px;}
+  .voz-contexto{font-size:12px; color:var(--po); margin-bottom:6px; font-family:'IBM Plex Mono',monospace; text-transform:uppercase; letter-spacing:0.5px;}
+
+  /* ===== APLICAÇÃO ===== */
+  .tela{
+    border:1px solid var(--linha-forte);
+    background:
+      linear-gradient(var(--linha-forte) 1px, transparent 1px),
+      linear-gradient(90deg, var(--linha-forte) 1px, transparent 1px),
+      var(--concreto);
+    background-size:16px 16px;
+    padding:18px;
+    margin-bottom:20px;
+  }
+  .tela-nome{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    color:var(--po);
+    margin-bottom:14px;
+  }
+  .linha-log{
+    display:flex; justify-content:space-between; align-items:baseline;
+    padding:9px 0; border-bottom:1px solid var(--linha-forte);
+    font-family:'IBM Plex Mono',monospace; font-size:13px;
+  }
+  .linha-log:last-child{border-bottom:none;}
+  .linha-log .ex{color:var(--cal);}
+  .linha-log .carga{color:var(--cal); font-weight:600;}
+  .linha-log .rpe{color:var(--po); font-size:11px;}
+
+  .anotacao-ia{
+    margin-top:14px;
+    background:var(--forja-fraca);
+    border-left:3px solid var(--forja);
+    padding:12px 14px;
+    transform:rotate(-0.4deg);
+    font-size:13.5px;
+    line-height:1.55;
+  }
+  .anotacao-ia .tag{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    color:var(--forja);
+    display:block;
+    margin-bottom:5px;
+  }
+
+  footer{padding:40px 0 70px; text-align:left;}
+  footer p{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--po); letter-spacing:0.3px;}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <section class="capa">
+    <div class="eyebrow">BRAND BOOK</div>
+    <h1 class="capa-title">VYN
+      <svg viewBox="0 0 100 18" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2,10 C 20,4 35,15 50,8 C 65,2 80,13 98,6" stroke="#D6451B" stroke-width="3" fill="none" stroke-linecap="round"/>
+      </svg>
+    </h1>
+    <div class="capa-subtag">MUSCLE</div>
+    <p class="capa-tagline">Registra o treino. A IA aponta o ajuste.</p>
+    <div class="capa-meta">MVP · 3 telas · sem feed, sem gamificação</div>
+  </section>
+
+  <section>
+    <div class="eyebrow">Posicionamento</div>
+    <h2>O que é</h2>
+    <p>Vyn Muscle não é um diário de treino — isso qualquer app faz. É um coach que lê o histórico real de séries, carga e RPE e aponta, com base nesses números, o que ajustar na próxima sessão. O log é seu; a correção é dela.</p>
+    <h2 style="margin-top:28px;">O que não é, por agora</h2>
+    <p class="muted">Foto corporal, bioimpedância, wearable, painel de personal trainer, white label. Se não ajuda a responder "as pessoas pagam pelo coach de IA?", não entra no MVP.</p>
+
+    <div class="duas-colunas" style="margin-top:32px;">
+      <div class="bloco">
+        <h3>Somos</h3>
+        <ul class="lista">
+          <li>Direto</li>
+          <li>Técnico, orientado a dados</li>
+          <li>Específico pra quem treina sério</li>
+        </ul>
+      </div>
+      <div class="bloco">
+        <h3>Não somos</h3>
+        <ul class="lista">
+          <li>Motivacional vazio</li>
+          <li>Social / feed / ranking</li>
+          <li>Genérico — "fitness lifestyle"</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">Paleta de cores</div>
+    <h2>Ferro, não neon</h2>
+    <p class="muted">Cor não decora — sinaliza. O acento (Forja) é reservado pra uma única função: a correção da IA. Usar em botão decorativo ou ícone aleatório dilui o significado.</p>
+
+    <div class="paleta-grid">
+      <div class="swatch">
+        <div class="cor" style="background:#1C1B19;"></div>
+        <div class="info"><div class="nome">Ferro</div><div class="hex">#1C1B19</div><div class="uso">Fundo base, todas as telas</div></div>
+      </div>
+      <div class="swatch">
+        <div class="cor" style="background:#242220;"></div>
+        <div class="info"><div class="nome">Concreto</div><div class="hex">#242220</div><div class="uso">Cards, inputs, superfícies</div></div>
+      </div>
+      <div class="swatch">
+        <div class="cor" style="background:#3A372F;"></div>
+        <div class="info"><div class="nome">Grafite</div><div class="hex">#3A372F</div><div class="uso">Linhas, divisórias, grade</div></div>
+      </div>
+      <div class="swatch">
+        <div class="cor" style="background:#D6451B;"></div>
+        <div class="info"><div class="nome">Forja</div><div class="hex">#D6451B</div><div class="uso">Só sugestão da IA / CTA principal</div></div>
+      </div>
+      <div class="swatch">
+        <div class="cor" style="background:#EDEAE2;"></div>
+        <div class="info"><div class="nome">Cal</div><div class="hex">#EDEAE2</div><div class="uso">Texto principal</div></div>
+      </div>
+      <div class="swatch">
+        <div class="cor" style="background:#9A958A;"></div>
+        <div class="info"><div class="nome">Pó</div><div class="hex">#9A958A</div><div class="uso">Texto secundário, labels</div></div>
+      </div>
+      <div class="swatch">
+        <div class="cor" style="background:#7C8C44;"></div>
+        <div class="info"><div class="nome">Bronze</div><div class="hex">#7C8C44</div><div class="uso">Carga subiu, meta batida</div></div>
+      </div>
+      <div class="swatch">
+        <div class="cor" style="background:#A23A20;"></div>
+        <div class="info"><div class="nome">Brasa</div><div class="hex">#A23A20</div><div class="uso">RPE 9–10, série falhou</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">Tipografia</div>
+    <h2>Três papéis, não dois</h2>
+    <p class="muted">O produto inteiro é número (carga, reps, RPE). A tipografia trata número como conteúdo principal — não como detalhe ao lado do texto.</p>
+
+    <div class="tipo-bloco">
+      <div class="papel">Display — Anton — números grandes e títulos</div>
+      <div class="num-grande">140<span>KG</span></div>
+    </div>
+
+    <div class="tipo-bloco">
+      <div class="papel">Dados — IBM Plex Mono — linhas de log, tabelas</div>
+      <table class="ledger">
+        <tr><th>Exercício</th><th>Séries</th><th>Carga</th><th>RPE</th></tr>
+        <tr><td>Supino reto</td><td>4×8</td><td>80kg</td><td>7</td></tr>
+        <tr><td>Agachamento</td><td>5×5</td><td>120kg</td><td class="rpe-alto">9</td></tr>
+      </table>
+    </div>
+
+    <div class="tipo-bloco">
+      <div class="papel">Leitura — Inter — corpo de texto, mensagens do coach</div>
+      <p class="coach-msg">Seu RPE médio no supino subiu pra 9 nas últimas três sessões. Isso é sinal de fadiga acumulada, não de progresso. Reduza 5% na carga essa semana.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">Logo</div>
+    <h2>Construção</h2>
+    <div class="logo-area">
+      <div class="marca">VYN</div>
+      <div class="marca-sub">MUSCLE</div>
+      <div class="marca-pequena"><span class="traco"></span> marca mínima — o traço é a assinatura</div>
+    </div>
+    <p class="muted">"Vyn" sempre em Anton, cor Forja, com o traço por baixo — é a assinatura de quem corrige o seu treino. "MUSCLE" vem sempre em mono, menor, abaixo, cor Pó: é o rótulo da categoria, nunca disputa peso visual com "Vyn".</p>
+    <h3 style="margin-top:24px;">Não fazer</h3>
+    <ul class="lista">
+      <li>Gradiente na palavra "Vyn"</li>
+      <li>"MUSCLE" do mesmo tamanho ou cor que "Vyn"</li>
+      <li>Ícone de halter, braço ou chama junto ao nome</li>
+      <li>Forja como cor de fundo de tela inteira</li>
+    </ul>
+  </section>
+
+  <section>
+    <div class="eyebrow">Voz &amp; Tom</div>
+    <h2>Dado, não torcida</h2>
+    <p class="muted">A regra de comunicação do projeto vale pro produto também: direto, sem disclaimer genérico, sem hype. O coach informa o que mudar — não comemora.</p>
+
+    <div class="par-voz">
+      <div class="voz-contexto">Sugestão do coach</div>
+      <div class="voz-card ok"><div class="voz-label">Usar</div><p>RPE médio de 9 nas últimas 3 sessões de supino. Reduza 5% na carga ou tire uma série.</p></div>
+      <div class="voz-card evitar"><div class="voz-label">Evitar</div><p>Você está arrasando! Continue assim, campeão!</p></div>
+    </div>
+
+    <div class="par-voz">
+      <div class="voz-contexto">Histórico vazio</div>
+      <div class="voz-card ok"><div class="voz-label">Usar</div><p>Nenhum treino registrado ainda. Registre a primeira série em Hoje.</p></div>
+      <div class="voz-card evitar"><div class="voz-label">Evitar</div><p>Ainda não há nada por aqui... que tal começar sua jornada?</p></div>
+    </div>
+
+    <div class="par-voz">
+      <div class="voz-contexto">Erro ao salvar</div>
+      <div class="voz-card ok"><div class="voz-label">Usar</div><p>Não foi possível salvar a série. Tente novamente.</p></div>
+      <div class="voz-card evitar"><div class="voz-label">Evitar</div><p>Oops! Algo deu errado no nosso sistema super avançado.</p></div>
+    </div>
+  </section>
+
+  <section style="border-bottom:none;">
+    <div class="eyebrow">Aplicação</div>
+    <h2>As três telas do MVP</h2>
+
+    <div class="tela">
+      <div class="tela-nome">Hoje</div>
+      <div class="linha-log"><span class="ex">Supino reto — 4×8</span><span class="carga">80kg</span><span class="rpe">RPE 7</span></div>
+      <div class="linha-log"><span class="ex">Remada curvada — 4×10</span><span class="carga">60kg</span><span class="rpe">RPE 8</span></div>
+    </div>
+
+    <div class="tela">
+      <div class="tela-nome">Histórico</div>
+      <div class="linha-log"><span class="ex">24/06 — Agachamento</span><span class="carga">120kg</span><span class="rpe">RPE 9</span></div>
+      <div class="linha-log"><span class="ex">21/06 — Agachamento</span><span class="carga">115kg</span><span class="rpe">RPE 8</span></div>
+      <div class="linha-log"><span class="ex">17/06 — Agachamento</span><span class="carga">115kg</span><span class="rpe">RPE 7</span></div>
+    </div>
+
+    <div class="tela">
+      <div class="tela-nome">Coach</div>
+      <div class="linha-log"><span class="ex">Agachamento, últimas 3 sessões</span><span class="carga">↑ carga</span><span class="rpe">↑ RPE</span></div>
+      <div class="anotacao-ia">
+        <span class="tag">Anotação da IA</span>
+        Carga subindo, mas RPE também. Próxima sessão: mantenha 120kg e teste 5×5 em vez de subir peso.
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>VYN MUSCLE — BRAND BOOK V1 · DOCUMENTO VIVO, ATUALIZA JUNTO COM O MVP</p>
+  </footer>
+
+</div>
+</body>
+</html>
