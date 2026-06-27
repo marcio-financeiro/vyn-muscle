@@ -467,6 +467,58 @@
   margin: 6px 0 0;
 }
 
+/* ── Link da topbar (Perfil, ao lado do Sair) ── */
+.link-topbar {
+  font-family: var(--fonte-dados);
+  font-size: 11px;
+  color: var(--po);
+  text-decoration: none;
+  letter-spacing: 0.5px;
+  padding: 4px 0;
+  margin-right: 12px;
+}
+.link-topbar:hover { color: var(--cal); }
+
+/* ── Tela de Perfil ── */
+.perfil-titulo {
+  font-family: var(--fonte-dados);
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--cal);
+  margin: 0 0 4px;
+}
+
+.perfil-subtitulo {
+  font-family: var(--fonte-leitura);
+  font-size: 13px;
+  color: var(--po);
+  margin: 0 0 20px;
+  line-height: 1.5;
+}
+
+.label-opcional {
+  font-family: var(--fonte-dados);
+  font-size: 10px;
+  color: var(--po);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.perfil-acoes {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  align-items: center;
+}
+
+.perfil-voltar {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  padding: 8px 14px;
+}
+
 /* ── Coach placeholder ── */
 .coach-placeholder {
   font-family: var(--fonte-leitura);

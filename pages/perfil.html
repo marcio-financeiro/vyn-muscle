@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vyn Muscle — Perfil</title>
+  <link rel="stylesheet" href="/css/tokens.css">
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body class="papel-log page">
+
+  <header class="topbar">
+    <div class="marca">
+      <span class="marca-vyn">VYN</span>
+      <span class="marca-muscle">MUSCLE</span>
+    </div>
+    <button class="btn-sair" id="btn-sair">Sair</button>
+  </header>
+
+  <main class="conteudo">
+    <p class="perfil-titulo" id="titulo-perfil">Configurações</p>
+    <p class="perfil-subtitulo" id="subtitulo-perfil"></p>
+
+    <form id="form-perfil">
+
+      <p class="grupo-data">Dados pessoais</p>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label" for="idade">Idade</label>
+          <input class="input" type="number" id="idade" min="10" max="99" placeholder="30" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="sexo">Sexo</label>
+          <select class="input" id="sexo" required>
+            <option value="">—</option>
+            <option value="M">Masculino</option>
+            <option value="F">Feminino</option>
+            <option value="outro">Outro</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="altura_cm">Altura (cm)</label>
+          <input class="input" type="number" id="altura_cm" min="100" max="250" placeholder="175" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="peso_kg">Peso (kg)</label>
+          <input class="input" type="number" id="peso_kg" step="0.1" min="30" max="300" placeholder="80" required>
+        </div>
+      </div>
+
+      <p class="grupo-data">Objetivo e experiência</p>
+
+      <div class="form-grid">
+        <div class="form-group span2">
+          <label class="form-label" for="objetivo">Objetivo</label>
+          <select class="input" id="objetivo" required>
+            <option value="">—</option>
+            <option value="hipertrofia">Hipertrofia (ganhar massa)</option>
+            <option value="forca">Força</option>
+            <option value="emagrecimento">Emagrecimento</option>
+            <option value="condicionamento">Condicionamento geral</option>
+            <option value="saude">Saúde e bem-estar</option>
+          </select>
+        </div>
+        <div class="form-group span2">
+          <label class="form-label" for="experiencia">Experiência com musculação</label>
+          <select class="input" id="experiencia" required>
+            <option value="">—</option>
+            <option value="iniciante">Iniciante (menos de 1 ano)</option>
+            <option value="intermediario">Intermediário (1–3 anos)</option>
+            <option value="avancado">Avançado (mais de 3 anos)</option>
+          </select>
+        </div>
+      </div>
+
+      <p class="grupo-data">Rotina de treino</p>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label" for="disponibilidade_semanal">Dias por semana</label>
+          <select class="input" id="disponibilidade_semanal" required>
+            <option value="">—</option>
+            <option value="2">2 dias</option>
+            <option value="3">3 dias</option>
+            <option value="4">4 dias</option>
+            <option value="5">5 dias</option>
+            <option value="6">6 dias</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="local_treino">Local de treino</label>
+          <select class="input" id="local_treino" required>
+            <option value="">—</option>
+            <option value="academia">Academia</option>
+            <option value="casa">Casa</option>
+          </select>
+        </div>
+        <div class="form-group span2">
+          <label class="form-label" for="equipamentos">Equipamentos disponíveis <span class="label-opcional">(opcional)</span></label>
+          <input class="input" type="text" id="equipamentos" placeholder="ex: barra, halteres, cabo">
+        </div>
+      </div>
+
+      <p class="grupo-data">Limitações <span class="label-opcional">(opcional)</span></p>
+
+      <div class="form-group">
+        <label class="form-label" for="restricoes">Restrições físicas ou lesões</label>
+        <input class="input" type="text" id="restricoes" placeholder="ex: dor no joelho esquerdo, hérnia L4-L5">
+      </div>
+
+      <p class="msg-erro" id="msg-erro" role="alert"></p>
+
+      <div class="perfil-acoes">
+        <button class="btn-cta" type="submit" id="btn-salvar">Salvar</button>
+        <a class="btn-secondary perfil-voltar" href="./hoje.html" id="link-voltar">← Hoje</a>
+      </div>
+
+    </form>
+  </main>
+
+  <script type="module" src="../js/perfil.js"></script>
+</body>
+</html>

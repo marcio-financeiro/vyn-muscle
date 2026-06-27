@@ -29,11 +29,18 @@ module.exports = async function handler(req, res) {
     return res.status(401).json({ erro: 'Sessão inválida' });
   }
 
-  const { data: logs, error: logsError } = await supabase
-    .from('treino_logs')
-    .select('*')
-    .order('data', { ascending: false })
-    .limit(60);
+  const [{ data: logs, error: logsError }, { data: perfil }] = await Promise.all([
+    supabase
+      .from('treino_logs')
+      .select('*')
+      .order('data', { ascending: false })
+      .limit(60),
+    supabase
+      .from('perfis')
+      .select('*')
+      .eq('user_id', user.id)
+      .maybeSingle(),
+  ]);
 
   if (logsError) {
     return res.status(500).json({ erro: 'Erro ao buscar histórico' });
@@ -43,6 +50,7 @@ module.exports = async function handler(req, res) {
 
   if (pergunta) {
     const contexto = montarContextoTexto(logs || []);
+    const perfilTexto = montarPerfilTexto(perfil);
     const respostaIA = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -55,7 +63,7 @@ module.exports = async function handler(req, res) {
         max_tokens: 512,
         messages: [{
           role: 'user',
-          content: `Você é um coach de musculação. Use o histórico de treino abaixo para responder à pergunta. Seja direto e prático, máximo 3 frases.\n\nHistórico:\n${contexto}\n\nPergunta: ${pergunta}`,
+          content: `Você é um coach de musculação. Use o perfil e o histórico abaixo para responder à pergunta. Seja direto e prático, máximo 3 frases.\n\n${perfilTexto}\n\nHistórico:\n${contexto}\n\nPergunta: ${pergunta}`,
         }],
       }),
     });
@@ -77,7 +85,7 @@ module.exports = async function handler(req, res) {
     porExercicio[log.exercicio].push(log);
   }
 
-  const prompt = montarPrompt(porExercicio);
+  const prompt = montarPrompt(porExercicio, perfil);
 
   const respostaIA = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
@@ -114,6 +122,22 @@ module.exports = async function handler(req, res) {
   return res.status(200).json({ insights });
 };
 
+function montarPerfilTexto(perfil) {
+  if (!perfil) return '';
+  const partes = [];
+  if (perfil.idade)                   partes.push(`${perfil.idade} anos`);
+  if (perfil.sexo)                    partes.push(`sexo: ${perfil.sexo}`);
+  if (perfil.altura_cm)               partes.push(`${perfil.altura_cm}cm`);
+  if (perfil.peso_kg)                 partes.push(`${perfil.peso_kg}kg`);
+  if (perfil.objetivo)                partes.push(`objetivo: ${perfil.objetivo}`);
+  if (perfil.experiencia)             partes.push(`experiência: ${perfil.experiencia}`);
+  if (perfil.disponibilidade_semanal) partes.push(`treina ${perfil.disponibilidade_semanal}x/semana`);
+  if (perfil.local_treino)            partes.push(`local: ${perfil.local_treino}`);
+  if (perfil.equipamentos)            partes.push(`equipamentos: ${perfil.equipamentos}`);
+  if (perfil.restricoes)              partes.push(`restrições: ${perfil.restricoes}`);
+  return partes.length ? `Perfil do usuário: ${partes.join(', ')}.` : '';
+}
+
 function montarContextoTexto(logs) {
   if (!logs.length) return 'Nenhum treino registrado ainda.';
   return logs
@@ -124,7 +148,7 @@ function montarContextoTexto(logs) {
     .join('\n');
 }
 
-function montarPrompt(porExercicio) {
+function montarPrompt(porExercicio, perfil) {
   const resumo = Object.entries(porExercicio)
     .map(([exercicio, sessoes]) => {
       const linhas = sessoes
@@ -137,7 +161,10 @@ function montarPrompt(porExercicio) {
     })
     .join('\n\n');
 
-  return `Você é um coach de musculação analisando o histórico de treino de um usuário.
+  const perfilTexto = montarPerfilTexto(perfil);
+  const cabecalhoPerfil = perfilTexto ? `\n${perfilTexto}\n` : '';
+
+  return `Você é um coach de musculação analisando o histórico de treino de um usuário.${cabecalhoPerfil}
 
 Histórico recente por exercício:
 

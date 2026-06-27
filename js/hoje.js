@@ -1,5 +1,5 @@
 // js/hoje.js
-import { exigirSessao } from './lib/authGuard.js';
+import { exigirSessaoEPerfil } from './lib/authGuard.js';
 import { logout } from './services/authService.js';
 import { logSerie, getHoje } from './services/treinoService.js';
 
@@ -44,7 +44,7 @@ async function carregarHoje() {
 }
 
 async function init() {
-  const session = await exigirSessao();
+  const session = await exigirSessaoEPerfil();
   if (!session) return;
 
   document.getElementById('btn-sair').addEventListener('click', logout);
