@@ -73,11 +73,14 @@ module.exports = async function handler(req, res) {
   const dadosIA = await respostaIA.json();
   const textoIA = dadosIA.content?.[0]?.text ?? '';
 
+  // Remove bloco markdown se a IA devolver ```json ... ```
+  const textoLimpo = textoIA.replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/i, '').trim();
+
   let insights;
   try {
-    insights = JSON.parse(textoIA);
+    insights = JSON.parse(textoLimpo);
   } catch {
-    return res.status(500).json({ erro: 'Resposta da IA em formato inesperado', raw: textoIA.slice(0, 300) });
+    return res.status(500).json({ erro: 'Resposta da IA em formato inesperado', raw: textoLimpo.slice(0, 300) });
   }
 
   return res.status(200).json({ insights });
