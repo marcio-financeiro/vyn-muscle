@@ -83,7 +83,8 @@
   border: none;
   cursor: pointer;
   letter-spacing: 0.5px;
-  padding: 4px 0;
+  padding: 0 8px;
+  min-height: 44px;
   transition: color 0.15s;
 }
 .btn-sair:hover { color: var(--cal); }
@@ -481,10 +482,21 @@
   color: var(--po);
   text-decoration: none;
   letter-spacing: 0.5px;
-  padding: 4px 0;
-  margin-right: 12px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 8px;
+  min-height: 44px;
+  margin-right: 4px;
 }
 .link-topbar:hover { color: var(--cal); }
+
+/* ── Seção visual do formulário de perfil (Common Region) ── */
+.form-secao {
+  background: var(--concreto);
+  border: 1px solid var(--linha-forte);
+  padding: 14px 14px 6px;
+  margin-bottom: 14px;
+}
 
 /* ── Tela de Perfil ── */
 .perfil-titulo {

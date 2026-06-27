@@ -65,6 +65,7 @@ function configurarForm(session) {
     if (!pergunta) return;
 
     btn.disabled = true;
+    btn.textContent = 'Enviando...';
     container.innerHTML = '<p class="vazio">Consultando o coach...</p>';
 
     try {
@@ -86,6 +87,7 @@ function configurarForm(session) {
       container.innerHTML = '<p class="vazio">Erro ao conectar com o coach. Tenta de novo.</p>';
     } finally {
       btn.disabled = false;
+      btn.textContent = 'Enviar';
     }
   });
 }

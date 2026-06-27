@@ -24,20 +24,23 @@ async function init() {
     e.preventDefault();
     const msgErro = document.getElementById('msg-erro');
     const btnSalvar = document.getElementById('btn-salvar');
+    const textoOriginal = btnSalvar.textContent;
     msgErro.textContent = '';
     btnSalvar.disabled = true;
+    btnSalvar.textContent = 'Salvando...';
 
     const campos = coletarCampos();
     const { error } = await salvarPerfil(campos);
 
-    btnSalvar.disabled = false;
-
     if (error) {
+      btnSalvar.disabled = false;
+      btnSalvar.textContent = textoOriginal;
       msgErro.textContent = 'Erro ao salvar. Tente novamente.';
       return;
     }
 
-    location.replace('./hoje.html');
+    btnSalvar.textContent = textoOriginal === 'Atualizar' ? 'Atualizado!' : 'Salvo!';
+    setTimeout(() => { location.replace('./hoje.html'); }, 1500);
   });
 }
 

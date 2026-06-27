@@ -37,6 +37,11 @@ async function carregarHoje() {
   const { data, error } = await getHoje();
   if (error || !data?.length) {
     lista.innerHTML = '<p class="vazio">Nenhuma série registrada hoje.</p>';
+    const btnVazio = document.createElement('button');
+    btnVazio.className = 'btn-adicionar';
+    btnVazio.textContent = '+ Primeira série do dia';
+    btnVazio.addEventListener('click', () => document.getElementById('btn-adicionar').click());
+    lista.appendChild(btnVazio);
     return;
   }
   lista.innerHTML = '';
@@ -70,7 +75,8 @@ async function init() {
     e.preventDefault();
     const btnSalvar = document.getElementById('btn-salvar');
     msgErro.textContent = '';
-    btnSalvar.disabled  = true;
+    btnSalvar.disabled = true;
+    btnSalvar.textContent = 'Salvando...';
 
     const { data, error } = await logSerie({
       exercicio: document.getElementById('exercicio').value.trim(),
@@ -81,9 +87,9 @@ async function init() {
       obs:    document.getElementById('obs').value.trim()        || null,
     });
 
-    btnSalvar.disabled = false;
-
     if (error) {
+      btnSalvar.disabled = false;
+      btnSalvar.textContent = 'Salvar';
       msgErro.textContent = 'Não foi possível salvar a série. Tente novamente.';
       return;
     }
@@ -92,6 +98,8 @@ async function init() {
     formSerie.classList.remove('visivel');
     btnAdicionar.style.display = '';
     formSerie.reset();
+    btnSalvar.disabled = false;
+    btnSalvar.textContent = 'Salvar';
   });
 
   await carregarHoje();
