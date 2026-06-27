@@ -1,8 +1,9 @@
+@import url('./tokens.css');
+
 /* css/app.css — estilos das telas Vyn Muscle.
    Zero hex literal aqui: toda cor via custom property de tokens.css.
    Zero nome de fonte direto: tudo via --fonte-display, --fonte-dados, --fonte-leitura.
 */
-@import url('./tokens.css');
 
 *, *::before, *::after { box-sizing: border-box; }
 
@@ -205,8 +206,8 @@
 }
 
 .input {
-  background: var(--ferro);
-  border: 1px solid var(--grafite);
+  background: var(--concreto);
+  border: 1px solid var(--linha-forte);
   color: var(--cal);
   font-family: var(--fonte-dados);
   font-size: 13px;
@@ -216,6 +217,7 @@
   transition: border-color 0.15s;
 }
 .input:focus { border-color: var(--forja); }
+.input::placeholder { color: var(--po); opacity: 1; }
 
 /* ── Botões ── */
 .btn-cta {
@@ -278,6 +280,30 @@
   color: var(--brasa);
   min-height: 16px;
   margin: 0;
+}
+
+/* ── Logo display (markup exato do brand book — .logo-area .marca .marca-sub) ── */
+.logo-area {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.logo-area .marca {
+  display: block;
+  font-family: var(--fonte-display);
+  font-size: clamp(32px, 9vw, 48px);
+  color: var(--forja);
+  line-height: 1;
+}
+
+.logo-area .marca-sub {
+  display: block;
+  font-family: var(--fonte-dados);
+  font-size: 13px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--po);
+  margin-top: 8px;
 }
 
 /* ── Login ── */
