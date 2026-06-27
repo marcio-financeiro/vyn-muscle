@@ -27,6 +27,20 @@
     <div id="coach-insights">
       <p class="vazio">Analisando seu histórico...</p>
     </div>
+
+    <div class="form-coach">
+      <form id="form-pergunta">
+        <label class="form-label" for="campo-pergunta">Pergunte ao coach</label>
+        <div class="form-coach-row">
+          <input class="input" type="text" id="campo-pergunta"
+                 placeholder="ex: devo aumentar a carga do agachamento?"
+                 autocomplete="off">
+          <button type="submit" class="btn-cta" id="btn-perguntar">Enviar</button>
+        </div>
+      </form>
+    </div>
+
+    <div id="resposta-coach"></div>
   </main>
 
   <script type="module" src="../js/coach.js"></script>

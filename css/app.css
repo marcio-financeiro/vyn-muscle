@@ -439,6 +439,34 @@
   margin-bottom: 24px;
 }
 
+/* ── Formulário de pergunta livre ao Coach ── */
+.form-coach {
+  margin-top: 24px;
+  border-top: 1px solid var(--linha-forte);
+  padding-top: 18px;
+}
+
+.form-coach-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.form-coach-row .input { flex: 1; }
+
+.form-coach-row .btn-cta {
+  width: auto;
+  padding: 8px 18px;
+  white-space: nowrap;
+}
+
+.pergunta-usuario {
+  font-family: var(--fonte-dados);
+  font-size: 12px;
+  color: var(--po);
+  margin: 6px 0 0;
+}
+
 /* ── Coach placeholder ── */
 .coach-placeholder {
   font-family: var(--fonte-leitura);

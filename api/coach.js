@@ -39,6 +39,34 @@ module.exports = async function handler(req, res) {
     return res.status(500).json({ erro: 'Erro ao buscar histórico' });
   }
 
+  const { pergunta } = req.body || {};
+
+  if (pergunta) {
+    const contexto = montarContextoTexto(logs || []);
+    const respostaIA = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': process.env.ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01',
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 512,
+        messages: [{
+          role: 'user',
+          content: `Você é um coach de musculação. Use o histórico de treino abaixo para responder à pergunta. Seja direto e prático, máximo 3 frases.\n\nHistórico:\n${contexto}\n\nPergunta: ${pergunta}`,
+        }],
+      }),
+    });
+    if (!respostaIA.ok) {
+      return res.status(500).json({ erro: 'Erro ao consultar a IA' });
+    }
+    const dadosIA = await respostaIA.json();
+    const sugestao = dadosIA.content?.[0]?.text?.trim() ?? '';
+    return res.status(200).json({ sugestao });
+  }
+
   if (!logs || logs.length === 0) {
     return res.status(200).json({ insights: [] });
   }
@@ -85,6 +113,16 @@ module.exports = async function handler(req, res) {
 
   return res.status(200).json({ insights });
 };
+
+function montarContextoTexto(logs) {
+  if (!logs.length) return 'Nenhum treino registrado ainda.';
+  return logs
+    .slice(0, 20)
+    .map(s =>
+      `${s.data} — ${s.exercicio}: ${s.series ?? '?'}x${s.reps ?? '?'} @ ${s.carga ?? '?'}kg, RPE ${s.rpe ?? 'não informado'}${s.obs ? `, obs: ${s.obs}` : ''}`
+    )
+    .join('\n');
+}
 
 function montarPrompt(porExercicio) {
   const resumo = Object.entries(porExercicio)
