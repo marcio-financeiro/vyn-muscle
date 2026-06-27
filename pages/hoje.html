@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vyn Muscle — Hoje</title>
+  <link rel="stylesheet" href="../css/app.css">
+</head>
+<body class="papel-log page">
+
+  <header class="topbar">
+    <div class="marca">
+      <span class="marca-vyn">VYN</span>
+      <span class="marca-muscle">MUSCLE</span>
+    </div>
+    <button class="btn-sair" id="btn-sair">Sair</button>
+  </header>
+
+  <nav class="nav-abas" aria-label="Navegação principal">
+    <a class="nav-aba ativa" href="./hoje.html" aria-current="page">Hoje</a>
+    <a class="nav-aba" href="./historico.html">Histórico</a>
+    <a class="nav-aba" href="./coach.html">Coach</a>
+  </nav>
+
+  <main class="conteudo">
+    <button class="btn-adicionar" id="btn-adicionar">+ Série</button>
+
+    <form class="form-serie" id="form-serie" aria-label="Nova série">
+      <div class="form-grid">
+        <div class="form-group span2">
+          <label class="form-label" for="exercicio">Exercício</label>
+          <input class="input" type="text" id="exercicio" placeholder="ex: Supino reto" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="series">Séries</label>
+          <input class="input" type="number" id="series" min="1" max="20" placeholder="4">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="reps">Reps</label>
+          <input class="input" type="number" id="reps" min="1" max="100" placeholder="8">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="carga">Carga (kg)</label>
+          <input class="input" type="number" id="carga" step="0.5" min="0" placeholder="80">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="rpe">RPE (1–10)</label>
+          <input class="input" type="number" id="rpe" min="1" max="10" placeholder="7">
+        </div>
+        <div class="form-group span2">
+          <label class="form-label" for="obs">Obs</label>
+          <input class="input" type="text" id="obs" placeholder="ex: última série falhou">
+        </div>
+      </div>
+      <p class="msg-erro" id="msg-erro-form" role="alert"></p>
+      <div style="display:flex;gap:8px;">
+        <button class="btn-cta" type="submit" id="btn-salvar" style="flex:1">Salvar</button>
+        <button class="btn-secondary" type="button" id="btn-cancelar">Cancelar</button>
+      </div>
+    </form>
+
+    <div id="lista-hoje" aria-live="polite">
+      <p class="vazio">Carregando...</p>
+    </div>
+  </main>
+
+  <script type="module" src="../js/hoje.js"></script>
+</body>
+</html>
