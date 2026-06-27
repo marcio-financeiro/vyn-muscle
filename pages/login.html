@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vyn Muscle — Login</title>
+  <link rel="stylesheet" href="../css/app.css">
+</head>
+<body class="papel-log">
+  <div class="login-wrap">
+    <div class="login-card">
+      <div class="login-marca">
+        <span class="login-vyn">VYN</span>
+        <span class="login-muscle">MUSCLE</span>
+      </div>
+      <p class="login-title" id="label-titulo">Entrar</p>
+      <form class="login-form" id="form-login">
+        <div class="form-group">
+          <label class="form-label" for="email">E-mail</label>
+          <input class="input" type="email" id="email" required autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="senha">Senha</label>
+          <input class="input" type="password" id="senha" required minlength="6" autocomplete="current-password">
+        </div>
+        <p class="msg-erro" id="msg-erro" role="alert"></p>
+        <button class="btn-cta" type="submit" id="btn-submit">Entrar</button>
+      </form>
+      <p class="link-modo" id="link-modo">Não tem conta? <span>Criar conta</span></p>
+    </div>
+  </div>
+  <script type="module" src="../js/login.js"></script>
+</body>
+</html>
