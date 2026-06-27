@@ -97,9 +97,9 @@
 
 .nav-aba {
   flex: 1;
-  padding: 10px 4px;
+  padding: 12px 4px;
   font-family: var(--fonte-dados);
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 1px;
   text-transform: uppercase;
   color: var(--po);
@@ -144,12 +144,13 @@
 /* ── Cabeçalho de grupo de data (histórico) ── */
 .grupo-data {
   font-family: var(--fonte-dados);
-  font-size: 11px;
+  font-size: var(--fs-label);
   text-transform: uppercase;
   letter-spacing: 1px;
   color: var(--po);
-  padding: 14px 0 6px;
+  padding: 24px 0 10px;
   border-bottom: 1px solid var(--grafite);
+  margin: 0;
 }
 
 /* ── Anotação da IA — uso exclusivo: Forja reservado para este fim ── */
@@ -165,7 +166,7 @@
 }
 .anotacao-ia .tag {
   font-family: var(--fonte-dados);
-  font-size: 10px;
+  font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 1px;
   color: var(--forja);
@@ -186,20 +187,20 @@
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 10px;
+  gap: 14px;
+  margin-bottom: 16px;
 }
 .form-grid .span2 { grid-column: span 2; }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
 }
 
 .form-label {
   font-family: var(--fonte-dados);
-  font-size: 10px;
+  font-size: var(--fs-label);
   text-transform: uppercase;
   letter-spacing: 1px;
   color: var(--po);
@@ -207,7 +208,7 @@
 
 .dica-campo {
   font-family: var(--fonte-leitura);
-  font-size: 0.75rem;
+  font-size: 13px;
   color: var(--po);
   font-weight: 400;
   margin-bottom: 3px;
@@ -220,10 +221,11 @@
   border: 1px solid var(--linha-forte);
   color: var(--cal);
   font-family: var(--fonte-dados);
-  font-size: 13px;
-  padding: 8px 10px;
+  font-size: var(--fs-input);
+  padding: 14px 12px;
   outline: none;
   width: 100%;
+  min-height: 48px;
   transition: border-color 0.15s;
 }
 .input:focus { border-color: var(--forja); }
@@ -235,10 +237,12 @@
   color: var(--cal);
   border: none;
   font-family: var(--fonte-dados);
-  font-size: 12px;
+  font-size: var(--fs-btn);
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1.5px;
-  padding: 10px 16px;
+  padding: 15px 16px;
+  min-height: 48px;
   cursor: pointer;
   width: 100%;
   transition: opacity 0.15s;
@@ -251,10 +255,11 @@
   color: var(--po);
   border: 1px solid var(--grafite);
   font-family: var(--fonte-dados);
-  font-size: 12px;
+  font-size: var(--fs-btn);
   text-transform: uppercase;
   letter-spacing: 1px;
-  padding: 8px 14px;
+  padding: 12px 16px;
+  min-height: 48px;
   cursor: pointer;
   transition: color 0.15s, border-color 0.15s;
 }
@@ -262,13 +267,14 @@
 
 .btn-adicionar {
   font-family: var(--fonte-dados);
-  font-size: 12px;
+  font-size: var(--fs-btn);
   text-transform: uppercase;
   letter-spacing: 1px;
   color: var(--forja);
   background: none;
   border: 1px solid var(--forja);
-  padding: 8px 14px;
+  padding: 12px 16px;
+  min-height: 48px;
   cursor: pointer;
   margin-bottom: 16px;
   transition: background 0.15s;
@@ -278,7 +284,7 @@
 /* ── Estados ── */
 .vazio {
   font-family: var(--fonte-dados);
-  font-size: 13px;
+  font-size: var(--fs-label);
   color: var(--po);
   padding: 24px 0;
   text-align: center;
@@ -286,9 +292,9 @@
 
 .msg-erro {
   font-family: var(--fonte-dados);
-  font-size: 12px;
+  font-size: var(--fs-label);
   color: var(--brasa);
-  min-height: 16px;
+  min-height: 20px;
   margin: 0;
 }
 
@@ -358,7 +364,7 @@
 
 .login-title {
   font-family: var(--fonte-dados);
-  font-size: 11px;
+  font-size: 13px;
   text-transform: uppercase;
   letter-spacing: 1px;
   color: var(--po);
@@ -381,7 +387,7 @@
 
 .link-modo {
   font-family: var(--fonte-dados);
-  font-size: 12px;
+  font-size: 14px;
   color: var(--po);
   text-align: center;
   margin-top: 12px;
@@ -421,12 +427,13 @@
   justify-content: center;
   gap: 10px;
   width: 100%;
-  padding: 10px 16px;
+  padding: 14px 16px;
+  min-height: 48px;
   background: transparent;
   border: 1px solid var(--linha-forte);
   color: var(--cal);
   font-family: var(--fonte-leitura);
-  font-size: 13px;
+  font-size: var(--fs-btn);
   font-weight: 500;
   cursor: pointer;
   transition: background 0.15s, border-color 0.15s;
@@ -462,7 +469,7 @@
 
 .pergunta-usuario {
   font-family: var(--fonte-dados);
-  font-size: 12px;
+  font-size: var(--fs-label);
   color: var(--po);
   margin: 6px 0 0;
 }
@@ -491,7 +498,7 @@
 
 .perfil-subtitulo {
   font-family: var(--fonte-leitura);
-  font-size: 13px;
+  font-size: var(--fs-btn);
   color: var(--po);
   margin: 0 0 20px;
   line-height: 1.5;

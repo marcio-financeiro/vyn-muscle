@@ -31,6 +31,12 @@
   --fonte-display: 'Anton', sans-serif;
   --fonte-dados: 'IBM Plex Mono', monospace;
   --fonte-leitura: 'Inter', sans-serif;
+
+  /* escala de tamanho de texto — só aqui, não repete px em app.css */
+  --fs-micro:  11px;  /* UI de baixo nível: marca-sub, aba de nav */
+  --fs-label:  14px;  /* labels mono em formulários e cabeçalhos de grupo */
+  --fs-input:  18px;  /* valores em inputs/selects e corpo Inter */
+  --fs-btn:    16px;  /* texto de botão (CTA, secundário, adicionar) */
 }
 
 /* utilitários de tipografia — aplica direto no HTML das telas */
