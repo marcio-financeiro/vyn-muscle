@@ -127,10 +127,21 @@ Responda APENAS em JSON válido, sem texto antes ou depois:
     const texto = dados.content?.[0]?.text ?? '';
     const limpo = texto.replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/i, '').trim();
     const resultado = JSON.parse(limpo);
-    return {
-      exercicios: resultado.exercicios || exercicios,
-      avisos: resultado.avisos || [],
-    };
+
+    // Preservar campos de prescrição do foco original — a IA só troca o nome
+    const adaptados = (resultado.exercicios || []).map((aiEx, i) => {
+      const original = exercicios[i] || {};
+      return {
+        nome:         aiEx.nome ?? original.nome,
+        tipo:         original.tipo,          // tipo normalizado do catálogo
+        series:       original.series,
+        reps_min:     original.reps_min,
+        reps_max:     original.reps_max,
+        descanso_seg: original.descanso_seg,
+      };
+    });
+
+    return { exercicios: adaptados, avisos: resultado.avisos || [] };
   } catch {
     return { exercicios, avisos: [] };
   }

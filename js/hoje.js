@@ -1,5 +1,9 @@
 // js/hoje.js
 import { exigirSessaoEPerfil } from './lib/authGuard.js';
+
+function normalizar(str) {
+  return (str || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+}
 import { logout } from './services/authService.js';
 import { logSerie, getHoje as buscarLogsHoje } from './services/treinoService.js';
 import { getPerfil } from './services/perfilService.js';
@@ -237,23 +241,31 @@ function renderizarSessao(dados) {
     const el = document.createElement('div');
     el.className = 'exercicio-sessao';
 
-    const detalhe = ex.tipo === 'bloco'
-      ? `${ex.duracao_min}min — ${ex.intensidade}`
-      : `${ex.series}×${ex.reps_min}–${ex.reps_max}`;
+    const tipoNorm = normalizar(ex.tipo);
 
-    const badgeHtml = ex.tipo === 'ancora'
+    const detalhe = tipoNorm === 'bloco'
+      ? `${ex.duracao_min}min — ${ex.intensidade}`
+      : (ex.series && ex.reps_min)
+        ? `${ex.series} séries × ${ex.reps_min}–${ex.reps_max} reps · ${ex.descanso_seg}s`
+        : '';
+
+    const badgeHtml = tipoNorm === 'ancora'
       ? '<span class="ex-badge ancora">ÂNCORA</span>'
-      : ex.tipo === 'ia' ? '<span class="ex-badge ia">IA</span>' : '';
+      : tipoNorm === 'ia' ? '<span class="ex-badge ia">IA</span>' : '';
 
     el.innerHTML = `
-      <span class="ex-nome">${ex.nome}</span>
-      <span class="ex-detalhe">${detalhe}</span>
-      ${badgeHtml}
+      <div class="ex-info">
+        <span class="ex-nome">${ex.nome}</span>
+        ${badgeHtml}
+        ${detalhe ? `<span class="ex-detalhe">${detalhe}</span>` : ''}
+      </div>
+      <button class="btn-reg-ex" type="button" aria-label="Registrar série de ${ex.nome}">+ Reg</button>
     `;
 
-    el.addEventListener('click', () => {
+    el.querySelector('.btn-reg-ex').addEventListener('click', () => {
       document.getElementById('exercicio').value = ex.nome;
-      document.getElementById('btn-adicionar').click();
+      const formSerie = document.getElementById('form-serie');
+      formSerie.classList.add('visivel');
       document.getElementById('exercicio').focus();
     });
 
@@ -317,11 +329,6 @@ async function carregarHoje() {
   const { data, error } = await buscarLogsHoje();
   if (error || !data?.length) {
     lista.innerHTML = '<p class="vazio">Nenhuma série registrada hoje.</p>';
-    const btnVazio = document.createElement('button');
-    btnVazio.className = 'btn-adicionar';
-    btnVazio.textContent = '+ Primeira série do dia';
-    btnVazio.addEventListener('click', () => document.getElementById('btn-adicionar').click());
-    lista.appendChild(btnVazio);
     return;
   }
   lista.innerHTML = '';
@@ -329,19 +336,12 @@ async function carregarHoje() {
 }
 
 function configurarFormSerie() {
-  const btnAdicionar = document.getElementById('btn-adicionar');
-  const formSerie    = document.getElementById('form-serie');
-  const btnCancelar  = document.getElementById('btn-cancelar');
-  const msgErro      = document.getElementById('msg-erro-form');
-
-  btnAdicionar.addEventListener('click', () => {
-    formSerie.classList.add('visivel');
-    btnAdicionar.style.display = 'none';
-  });
+  const formSerie  = document.getElementById('form-serie');
+  const btnCancelar = document.getElementById('btn-cancelar');
+  const msgErro    = document.getElementById('msg-erro-form');
 
   btnCancelar.addEventListener('click', () => {
     formSerie.classList.remove('visivel');
-    btnAdicionar.style.display = '';
     formSerie.reset();
     msgErro.textContent = '';
   });
@@ -371,7 +371,6 @@ function configurarFormSerie() {
 
     renderLinha(data, true);
     formSerie.classList.remove('visivel');
-    btnAdicionar.style.display = '';
     formSerie.reset();
     btnSalvar.disabled = false;
     btnSalvar.textContent = 'Salvar';

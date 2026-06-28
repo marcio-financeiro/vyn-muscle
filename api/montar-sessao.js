@@ -134,6 +134,9 @@ module.exports = async function handler(req, res) {
     avisos.unshift(`Você reportou dor${local} hoje. Avalie cada exercício — reduza a carga ou pule se sentir desconforto.`);
   }
 
+  // Garantir tipo normalizado (sem acento) em todos os exercícios
+  exerciciosDoDia = exerciciosDoDia.map(e => ({ ...e, tipo: normalizar(e.tipo) }));
+
   // 5. Salvar sessão gerada
   if (!exerciciosDoDia.length) {
     console.error('[montar-sessao] exercicios vazio — plano_id:', plano.id, 'tipos:', (plano.exercicios_efetivos || []).map(e => e.tipo));
