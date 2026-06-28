@@ -2,6 +2,7 @@
 import { exigirSessaoEPerfil } from './lib/authGuard.js';
 import { logout } from './services/authService.js';
 import { logSerie, getHoje as buscarLogsHoje } from './services/treinoService.js';
+import { getPerfil } from './services/perfilService.js';
 import { supabase } from './lib/supabaseClient.js';
 
 const FOCOS_META = {
@@ -27,12 +28,9 @@ let planoAtivo = null;
 let perfil     = null;
 let authSession = null;
 
-function getDataHoje() {
-  return new Date().toISOString().slice(0, 10);
-}
-
 async function apiFetch(path, opts = {}) {
-  const { data: { session } } = await supabase.auth.getSession();
+  const { data: { session }, error } = await supabase.auth.getSession();
+  if (error || !session) throw new Error('Sessão inválida');
   return fetch(path, {
     ...opts,
     headers: {
@@ -53,44 +51,10 @@ function mostrarFluxo(nome) {
 }
 
 async function carregarFluxo() {
-  const hoje = getDataHoje();
-
-  // 1. Check-in de hoje
-  const { data: checkin } = await supabase
-    .from('checkins_diarios')
-    .select('id')
-    .eq('user_id', authSession.user.id)
-    .eq('data', hoje)
-    .maybeSingle();
-
-  if (!checkin) {
-    mostrarFluxo('checkin');
-    return;
-  }
-
-  // 2. Plano ativo
-  const { data: plano } = await supabase
-    .from('planos_treino')
-    .select('id, foco_id, tipo')
-    .eq('user_id', authSession.user.id)
-    .eq('ativo', true)
-    .order('created_at', { ascending: false })
-    .limit(1)
-    .maybeSingle();
-
-  if (!plano) {
-    if (!focos.length) await carregarFocos();
-    renderizarFocos(document.getElementById('foco-grid'), null, null);
-    mostrarFluxo('selecao');
-    return;
-  }
-
-  planoAtivo = plano;
-
-  // 3. Montar sessão via API
   let dados;
   try {
     const resp = await apiFetch('/api/montar-sessao');
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
     dados = await resp.json();
   } catch {
     const el = document.getElementById('loading-msg');
@@ -108,6 +72,7 @@ async function carregarFluxo() {
     return;
   }
 
+  planoAtivo = dados.plano || null;
   renderizarSessao(dados);
   mostrarFluxo('sessao');
   await carregarHoje();
@@ -417,11 +382,7 @@ async function init() {
 
   document.getElementById('btn-sair').addEventListener('click', logout);
 
-  const { data: p } = await supabase
-    .from('perfis')
-    .select('objetivo')
-    .eq('user_id', authSession.user.id)
-    .maybeSingle();
+  const { data: p } = await getPerfil();
   perfil = p;
 
   configurarCheckin();

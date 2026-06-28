@@ -1,25 +1,6 @@
 // api/montar-sessao.js
 const { createClient } = require('@supabase/supabase-js');
-
-// Cópia de js/utils/idade.js — CommonJS não permite import de ES modules.
-function calcularIdade(dataNascimentoStr) {
-  if (!dataNascimentoStr) return null;
-  const hoje = new Date();
-  const [ano, mes, dia] = dataNascimentoStr.split('-').map(Number);
-  const nascimento = new Date(ano, mes - 1, dia);
-  let idade = hoje.getFullYear() - nascimento.getFullYear();
-  const aindaNaoFezAniversario =
-    hoje.getMonth() < nascimento.getMonth() ||
-    (hoje.getMonth() === nascimento.getMonth() && hoje.getDate() < nascimento.getDate());
-  if (aindaNaoFezAniversario) idade--;
-  return idade;
-}
-
-function diaAnterior(dateStr) {
-  const d = new Date(dateStr + 'T12:00:00');
-  d.setDate(d.getDate() - 1);
-  return d.toISOString().slice(0, 10);
-}
+const { calcularIdade, diaAnterior } = require('./_utils.js');
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'GET') return res.status(405).json({ erro: 'Método não permitido' });
@@ -78,6 +59,7 @@ module.exports = async function handler(req, res) {
       avisos: sessaoCache.avisos,
       sessao_id: sessaoCache.id,
       fonte: 'cache',
+      plano: { id: plano.id, foco_id: plano.foco_id, tipo: plano.tipo },
     });
   }
 
@@ -168,6 +150,7 @@ module.exports = async function handler(req, res) {
     avisos: novaSessao.avisos,
     sessao_id: novaSessao.id,
     fonte: 'gerada',
+    plano: { id: plano.id, foco_id: plano.foco_id, tipo: plano.tipo },
   });
 };
 

@@ -28,10 +28,6 @@ export async function cadastrarComEmail(email, senha) {
   return { sucesso: true, sessaoAtiva, usuario: data.user };
 }
 
-export async function signOut() {
-  await supabase.auth.signOut();
-}
-
 export async function logout() {
   await supabase.auth.signOut();
   window.location.href = '/pages/login.html';

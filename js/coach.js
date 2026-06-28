@@ -19,6 +19,7 @@ async function carregarInsights(session) {
       method: 'POST',
       headers: { Authorization: `Bearer ${session.access_token}` },
     });
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
     const dados = await resp.json();
 
     if (dados.erro) {
