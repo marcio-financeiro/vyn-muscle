@@ -2,6 +2,10 @@
 const { createClient } = require('@supabase/supabase-js');
 const { calcularIdade, diaAnterior } = require('./_utils.js');
 
+function normalizar(str) {
+  return (str || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+}
+
 module.exports = async function handler(req, res) {
   if (req.method !== 'GET') return res.status(405).json({ erro: 'Método não permitido' });
 
@@ -84,8 +88,8 @@ module.exports = async function handler(req, res) {
       exerciciosDoDia = todos;
     } else {
       // variado: âncoras fixas + subset rotativo de variáveis
-      const ancoras   = todos.filter(e => e.tipo === 'ancora' || e.tipo === 'bloco');
-      const variaveis = todos.filter(e => e.tipo === 'variavel');
+      const ancoras   = todos.filter(e => normalizar(e.tipo) === 'ancora' || normalizar(e.tipo) === 'bloco');
+      const variaveis = todos.filter(e => normalizar(e.tipo) === 'variavel');
 
       const { data: sessaoOntem } = await supabase
         .from('sessoes_diarias')
@@ -96,7 +100,7 @@ module.exports = async function handler(req, res) {
 
       const nomesOntem = new Set(
         (sessaoOntem?.exercicios || [])
-          .filter(e => e.tipo === 'variavel')
+          .filter(e => normalizar(e.tipo) === 'variavel')
           .map(e => e.nome)
       );
 
@@ -111,14 +115,14 @@ module.exports = async function handler(req, res) {
 
     // Ajustes determinísticos pelo check-in
     if (checkin.tempo_disponivel_min && checkin.tempo_disponivel_min < 40) {
-      const ancoras    = exerciciosDoDia.filter(e => e.tipo === 'ancora' || e.tipo === 'bloco');
-      const primeiraVar = exerciciosDoDia.find(e => e.tipo === 'variavel');
+      const ancoras    = exerciciosDoDia.filter(e => normalizar(e.tipo) === 'ancora' || normalizar(e.tipo) === 'bloco');
+      const primeiraVar = exerciciosDoDia.find(e => normalizar(e.tipo) === 'variavel');
       exerciciosDoDia = primeiraVar ? [...ancoras, primeiraVar] : ancoras;
     }
 
     if (checkin.dormiu_bem === false) {
       exerciciosDoDia = exerciciosDoDia.map(e => {
-        if (e.tipo === 'bloco') return e;
+        if (normalizar(e.tipo) === 'bloco') return e;
         return { ...e, series: Math.max(2, (e.series || 3) - 1) };
       });
     }
@@ -131,6 +135,11 @@ module.exports = async function handler(req, res) {
   }
 
   // 5. Salvar sessão gerada
+  if (!exerciciosDoDia.length) {
+    console.error('[montar-sessao] exercicios vazio — plano_id:', plano.id, 'tipos:', (plano.exercicios_efetivos || []).map(e => e.tipo));
+    return res.status(500).json({ erro: 'Nenhum exercício encontrado para o foco ativo. Escolha um novo foco.' });
+  }
+
   const { data: novaSessao, error: sessaoError } = await supabase
     .from('sessoes_diarias')
     .insert({

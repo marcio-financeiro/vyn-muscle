@@ -54,12 +54,16 @@ async function carregarFluxo() {
   let dados;
   try {
     const resp = await apiFetch('/api/montar-sessao');
-    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    if (!resp.ok) {
+      const body = await resp.json().catch(() => ({}));
+      throw new Error(body.erro || `HTTP ${resp.status}`);
+    }
     dados = await resp.json();
-  } catch {
+  } catch (err) {
     const el = document.getElementById('loading-msg');
     el.style.display = '';
-    el.textContent = 'Erro ao carregar sessão. Recarregue a página.';
+    el.innerHTML = `<span>${err.message || 'Erro ao carregar sessão.'}</span>
+      <br><button class="btn-secondary" style="margin-top:12px" onclick="location.reload()">Tentar de novo</button>`;
     return;
   }
 
