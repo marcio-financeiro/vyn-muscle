@@ -27,10 +27,11 @@ const FOCO_IA = {
   classe:    'ia',
 };
 
-let focos      = [];
-let planoAtivo = null;
-let perfil     = null;
-let authSession = null;
+let focos        = [];
+let planoAtivo   = null;
+let perfil       = null;
+let authSession  = null;
+let selecaoFocos = []; // [{id, nome}] — ordem é a sequência A/B/C
 
 async function apiFetch(path, opts = {}) {
   const { data: { session }, error } = await supabase.auth.getSession();
@@ -45,6 +46,37 @@ async function apiFetch(path, opts = {}) {
   });
 }
 
+// ── Checklist de progresso (simulado no client) ────────────────────────────
+
+function mostrarChecklist(el, itens) {
+  el.innerHTML = `<ul class="checklist-progresso">${
+    itens.map(t => `<li class="checklist-item"><span class="checklist-icone">○</span>${t}</li>`).join('')
+  }</ul>`;
+  el.style.display = '';
+
+  let idx = 0;
+  const items = el.querySelectorAll('.checklist-item');
+
+  function marcar(i) {
+    if (!items[i]) return;
+    items[i].querySelector('.checklist-icone').textContent = '✓';
+    items[i].classList.add('concluido');
+  }
+
+  const delay = () => 600 + Math.floor(Math.random() * 200);
+  let timer = setTimeout(function tick() {
+    if (idx < itens.length - 1) {
+      marcar(idx++);
+      timer = setTimeout(tick, delay());
+    }
+  }, delay());
+
+  return function concluir() {
+    clearTimeout(timer);
+    for (let i = idx; i < itens.length; i++) marcar(i);
+  };
+}
+
 // ── Controle de fluxo ──────────────────────────────────────────────────────
 
 function mostrarFluxo(nome) {
@@ -55,18 +87,30 @@ function mostrarFluxo(nome) {
 }
 
 async function carregarFluxo() {
+  const loadingEl = document.getElementById('loading-msg');
+  loadingEl.className = '';
+  for (const id of ['fluxo-checkin', 'fluxo-selecao', 'fluxo-sessao']) {
+    document.getElementById(id).style.display = 'none';
+  }
+
+  const concluir = mostrarChecklist(loadingEl, [
+    'Verificando seu check-in',
+    'Selecionando o treino de hoje',
+    'Ajustando pela sua sessão',
+    'Pronto',
+  ]);
+
   let dados;
   try {
     const resp = await apiFetch('/api/montar-sessao');
+    concluir();
     if (!resp.ok) {
       const body = await resp.json().catch(() => ({}));
       throw new Error(body.erro || `HTTP ${resp.status}`);
     }
     dados = await resp.json();
   } catch (err) {
-    const el = document.getElementById('loading-msg');
-    el.style.display = '';
-    el.innerHTML = `<span>${err.message || 'Erro ao carregar sessão.'}</span>
+    loadingEl.innerHTML = `<span>${err.message || 'Erro ao carregar sessão.'}</span>
       <br><button class="btn-secondary" style="margin-top:12px" onclick="location.reload()">Tentar de novo</button>`;
     return;
   }
@@ -75,7 +119,8 @@ async function carregarFluxo() {
 
   if (dados.precisa_plano) {
     if (!focos.length) await carregarFocos();
-    renderizarFocos(document.getElementById('foco-grid'), null, null);
+    const btnConfirmar = document.getElementById('btn-confirmar-sequencia');
+    renderizarFocos(document.getElementById('foco-grid'), btnConfirmar);
     mostrarFluxo('selecao');
     return;
   }
@@ -164,44 +209,129 @@ function objetivoRecomenda(focoNome, objetivo) {
   return (mapa[objetivo] || []).includes(focoNome);
 }
 
-function renderizarFocos(container, focoAtivoId, planoTipo) {
+function renderizarFocos(container, btnConfirmar) {
   container.innerHTML = '';
+  selecaoFocos = [];
+
   const objetivo = perfil?.objetivo;
   const todos = [...focos.map(f => ({ ...f, tipo: 'catalogo' })), FOCO_IA];
 
   for (const foco of todos) {
     const meta = FOCOS_META[foco.nome] || {};
-    const estaAtivo = foco.tipo === 'ia_personalizada'
-      ? (planoTipo === 'ia_personalizada')
-      : (foco.id === focoAtivoId);
     const recomendado = objetivoRecomenda(foco.nome, objetivo);
 
     const card = document.createElement('div');
-    card.className = `foco-card${estaAtivo ? ' ativo' : ''}${foco.classe ? ' ' + foco.classe : ''}`;
+    card.className = `foco-card${foco.classe ? ' ' + foco.classe : ''}`;
+    if (foco.tipo !== 'ia_personalizada') card.dataset.focoId = foco.id;
+
     card.innerHTML = `
-      ${estaAtivo ? '<span class="foco-badge-ativo">ATIVO</span>' : ''}
       <span class="foco-icone">${foco.icone || meta.icone || '🏅'}</span>
       <p class="foco-titulo">${foco.nome}</p>
       <p class="foco-subtitulo">${foco.subtitulo || meta.subtitulo || ''}</p>
       <span class="foco-tag">${foco.tag || meta.tag || ''}</span>
       ${recomendado ? '<span class="foco-recomendado">★ Recomendado</span>' : ''}
     `;
-    card.addEventListener('click', () => escolherFoco(foco.id, foco.tipo, container));
+
+    if (foco.tipo === 'ia_personalizada') {
+      card.addEventListener('click', () => confirmarIAPersonalizada(container, btnConfirmar));
+    } else {
+      card.addEventListener('click', () => toggleFocoSelecao(foco, container, btnConfirmar));
+    }
+
     container.appendChild(card);
+  }
+
+  if (btnConfirmar) {
+    btnConfirmar.style.display = '';
+    btnConfirmar.disabled = true;
   }
 }
 
-async function escolherFoco(focoId, tipo, container) {
-  container.innerHTML = `<p class="vazio">${tipo === 'ia_personalizada' ? 'Consultando IA...' : 'Aplicando foco...'}</p>`;
+function toggleFocoSelecao(foco, container, btnConfirmar) {
+  const idx = selecaoFocos.findIndex(f => f.id === foco.id);
+  if (idx >= 0) {
+    selecaoFocos.splice(idx, 1);
+  } else if (selecaoFocos.length < 3) {
+    selecaoFocos.push({ id: foco.id, nome: foco.nome });
+  }
 
-  const resp = await apiFetch('/api/escolher-plano', {
-    method: 'POST',
-    body: JSON.stringify({
-      foco_id: tipo === 'ia_personalizada' ? null : focoId,
-      tipo,
-      modo: 'variado',
-    }),
+  // Atualiza badges numerados em todos os cards
+  container.querySelectorAll('.foco-card[data-foco-id]').forEach(card => {
+    const cardIdx = selecaoFocos.findIndex(f => f.id === card.dataset.focoId);
+    card.querySelector('.foco-badge-seq')?.remove();
+    card.classList.toggle('selecionado', cardIdx >= 0);
+    if (cardIdx >= 0) {
+      const badge = document.createElement('span');
+      badge.className = 'foco-badge-seq';
+      badge.textContent = cardIdx + 1;
+      card.prepend(badge);
+    }
   });
+
+  if (btnConfirmar) btnConfirmar.disabled = selecaoFocos.length === 0;
+}
+
+async function confirmarSelecao(container, btnConfirmar) {
+  if (!selecaoFocos.length) return;
+
+  if (btnConfirmar) btnConfirmar.style.display = 'none';
+  const concluir = mostrarChecklist(container, [
+    'Lendo seu perfil',
+    'Aplicando suas restrições',
+    'Montando sua sequência',
+    'Pronto',
+  ]);
+
+  let resp;
+  try {
+    resp = await apiFetch('/api/escolher-plano', {
+      method: 'POST',
+      body: JSON.stringify({
+        focoIds: selecaoFocos.map(f => f.id),
+        tipo: 'catalogo',
+        modo: 'variado',
+      }),
+    });
+  } catch {
+    concluir();
+    container.innerHTML = '<p class="vazio">Erro de rede. Tente novamente.</p>';
+    return;
+  }
+
+  concluir();
+
+  if (!resp.ok) {
+    container.innerHTML = '<p class="vazio">Erro ao salvar foco. Tente novamente.</p>';
+    return;
+  }
+
+  const dados = await resp.json();
+  planoAtivo = dados.plano;
+  await carregarFluxo();
+}
+
+async function confirmarIAPersonalizada(container, btnConfirmar) {
+  if (btnConfirmar) btnConfirmar.style.display = 'none';
+  const concluir = mostrarChecklist(container, [
+    'Lendo seu perfil',
+    'Aplicando suas restrições',
+    'Montando sua sequência',
+    'Pronto',
+  ]);
+
+  let resp;
+  try {
+    resp = await apiFetch('/api/escolher-plano', {
+      method: 'POST',
+      body: JSON.stringify({ tipo: 'ia_personalizada', modo: 'variado' }),
+    });
+  } catch {
+    concluir();
+    container.innerHTML = '<p class="vazio">Erro de rede. Tente novamente.</p>';
+    return;
+  }
+
+  concluir();
 
   if (!resp.ok) {
     container.innerHTML = '<p class="vazio">Erro ao salvar foco. Tente novamente.</p>';
@@ -234,7 +364,7 @@ function renderizarSessao(dados) {
 
   const titulo = document.createElement('p');
   titulo.className = 'sessao-titulo';
-  titulo.textContent = 'Exercícios de hoje';
+  titulo.textContent = dados.treino_label || 'Exercícios de hoje';
   container.appendChild(titulo);
 
   for (const ex of dados.exercicios) {
@@ -274,20 +404,27 @@ function renderizarSessao(dados) {
 }
 
 function configurarTrocarFoco() {
-  const toggle = document.getElementById('btn-trocar-foco');
-  const grid   = document.getElementById('foco-grid-troca');
+  const toggle          = document.getElementById('btn-trocar-foco');
+  const grid            = document.getElementById('foco-grid-troca');
+  const btnConfirmarTroca = document.getElementById('btn-confirmar-troca');
 
   grid.style.display = 'none';
+  btnConfirmarTroca.style.display = 'none';
   toggle.textContent = 'Trocar foco';
+
+  btnConfirmarTroca.onclick = () => confirmarSelecao(grid, btnConfirmarTroca);
 
   toggle.onclick = async () => {
     if (!grid.style.display || grid.style.display === 'none') {
       if (!focos.length) await carregarFocos();
-      renderizarFocos(grid, planoAtivo?.foco_id, planoAtivo?.tipo);
+      renderizarFocos(grid, btnConfirmarTroca);
       grid.style.display = 'grid';
+      btnConfirmarTroca.disabled = true;
+      btnConfirmarTroca.style.display = '';
       toggle.textContent = '↑ Fechar';
     } else {
       grid.style.display = 'none';
+      btnConfirmarTroca.style.display = 'none';
       toggle.textContent = 'Trocar foco';
     }
   };
@@ -336,9 +473,9 @@ async function carregarHoje() {
 }
 
 function configurarFormSerie() {
-  const formSerie  = document.getElementById('form-serie');
+  const formSerie   = document.getElementById('form-serie');
   const btnCancelar = document.getElementById('btn-cancelar');
-  const msgErro    = document.getElementById('msg-erro-form');
+  const msgErro     = document.getElementById('msg-erro-form');
 
   btnCancelar.addEventListener('click', () => {
     formSerie.classList.remove('visivel');
@@ -379,6 +516,13 @@ function configurarFormSerie() {
 
 // ── INIT ──────────────────────────────────────────────────────────────────
 
+// Conecta botão "Confirmar sequência" da tela de seleção inicial
+function configurarBtnConfirmarSelecao() {
+  const btn = document.getElementById('btn-confirmar-sequencia');
+  const grid = document.getElementById('foco-grid');
+  btn.addEventListener('click', () => confirmarSelecao(grid, btn));
+}
+
 async function init() {
   authSession = await exigirSessaoEPerfil();
   if (!authSession) return;
@@ -390,6 +534,7 @@ async function init() {
 
   configurarCheckin();
   configurarFormSerie();
+  configurarBtnConfirmarSelecao();
   await carregarFluxo();
 }
 

@@ -20,24 +20,27 @@ module.exports = async function handler(req, res) {
   const { data: { user }, error: userError } = await supabase.auth.getUser();
   if (userError || !user) return res.status(401).json({ erro: 'Sessão inválida' });
 
-  const { foco_id, tipo = 'catalogo', modo = 'variado' } = req.body || {};
+  const { focoIds, tipo = 'catalogo', modo = 'variado' } = req.body || {};
 
-  let exercicios_efetivos = [];
+  let focos = [];
   let avisos = [];
 
   if (tipo === 'catalogo') {
-    if (!foco_id) return res.status(400).json({ erro: 'foco_id obrigatório para tipo catalogo' });
+    if (!focoIds?.length) return res.status(400).json({ erro: 'focoIds obrigatório para tipo catalogo' });
 
-    const { data: foco, error: focoError } = await supabase
+    // Busca todos os focos de uma vez
+    const { data: focosData, error: focosError } = await supabase
       .from('focos_treino')
       .select('*')
-      .eq('id', foco_id)
-      .single();
+      .in('id', focoIds);
 
-    if (focoError || !foco) return res.status(400).json({ erro: 'Foco não encontrado' });
+    if (focosError || !focosData?.length) return res.status(400).json({ erro: 'Foco não encontrado' });
 
-    exercicios_efetivos = foco.exercicios;
+    // Reordena para respeitar a ordem escolhida pelo usuário
+    const focosMap = Object.fromEntries(focosData.map(f => [f.id, f]));
+    const focosOrdenados = focoIds.map(id => focosMap[id]).filter(Boolean);
 
+    // Busca restrições do perfil
     const { data: perfil } = await supabase
       .from('perfis')
       .select('restricoes')
@@ -45,12 +48,19 @@ module.exports = async function handler(req, res) {
       .maybeSingle();
 
     if (perfil?.restricoes) {
-      const adaptado = await adaptarPorRestricao(foco.exercicios, perfil.restricoes);
-      exercicios_efetivos = adaptado.exercicios;
-      avisos = adaptado.avisos;
+      // Uma única chamada de IA para todos os focos selecionados
+      const resultado = await adaptarTodosPorRestricao(focosOrdenados, perfil.restricoes);
+      focos = resultado.focos;
+      avisos = resultado.avisos;
+    } else {
+      focos = focosOrdenados.map(f => ({
+        foco_id: f.id,
+        nome: f.nome,
+        exercicios_efetivos: f.exercicios,
+      }));
     }
   }
-  // ia_personalizada: exercicios_efetivos = [] (gerado por /api/montar-sessao)
+  // ia_personalizada: focos = [] — exercícios gerados em /api/montar-sessao
 
   // Desativar planos anteriores
   await supabase
@@ -69,14 +79,7 @@ module.exports = async function handler(req, res) {
 
   const { data: novoPlano, error: planoError } = await supabase
     .from('planos_treino')
-    .insert({
-      user_id: user.id,
-      foco_id: foco_id || null,
-      tipo,
-      modo,
-      exercicios_efetivos,
-      ativo: true,
-    })
+    .insert({ user_id: user.id, tipo, modo, focos, ativo: true })
     .select()
     .single();
 
@@ -85,26 +88,35 @@ module.exports = async function handler(req, res) {
   return res.status(200).json({ plano: novoPlano, avisos });
 };
 
-async function adaptarPorRestricao(exercicios, restricoes) {
-  if (!process.env.ANTHROPIC_API_KEY) return { exercicios, avisos: [] };
+async function adaptarTodosPorRestricao(focosOrdenados, restricoes) {
+  if (!process.env.ANTHROPIC_API_KEY) {
+    return {
+      focos: focosOrdenados.map(f => ({
+        foco_id: f.id, nome: f.nome, exercicios_efetivos: f.exercicios,
+      })),
+      avisos: [],
+    };
+  }
 
-  const listaStr = exercicios
-    .filter(e => e.tipo !== 'bloco')
-    .map(e => `- ${e.nome} (${e.tipo})`)
-    .join('\n');
-
-  if (!listaStr) return { exercicios, avisos: [] };
+  const focosStr = focosOrdenados.map((f, i) => {
+    const lista = f.exercicios
+      .filter(e => e.tipo !== 'bloco')
+      .map(e => `    - ${e.nome} (${e.tipo})`)
+      .join('\n');
+    return `Foco ${i}: "${f.nome}"\n${lista || '    (sem exercícios adaptáveis)'}`;
+  }).join('\n\n');
 
   const prompt = `Você é um personal trainer. O usuário tem: "${restricoes}".
 
-Exercícios do treino:
-${listaStr}
-
-Para cada exercício que conflite com a restrição, sugira uma substituição que trabalhe o mesmo grupo muscular e mantenha o mesmo tipo (ancora/variavel).
+Para cada foco abaixo, substitua exercícios que conflitem com a restrição mantendo o mesmo tipo (ancora/variavel).
 Se a restrição for lesão grave (cirurgia, ruptura, hérnia), inclua aviso de liberação médica.
 
+${focosStr}
+
 Responda APENAS em JSON válido, sem texto antes ou depois:
-{"exercicios":[/* mesmos campos originais, nome substituído onde necessário */],"avisos":["string"]}`;
+{"focos":[{"exercicios":[/* mesmos campos originais, nome substituído onde necessário */]}],"avisos":["string"]}
+
+O array "focos" deve ter exatamente ${focosOrdenados.length} elemento(s), na mesma ordem dos focos acima.`;
 
   try {
     const resp = await fetch('https://api.anthropic.com/v1/messages', {
@@ -116,33 +128,43 @@ Responda APENAS em JSON válido, sem texto antes ou depois:
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 1024,
+        max_tokens: 2048,
         messages: [{ role: 'user', content: prompt }],
       }),
     });
 
-    if (!resp.ok) return { exercicios, avisos: [] };
+    if (!resp.ok) throw new Error('API error');
 
     const dados = await resp.json();
     const texto = dados.content?.[0]?.text ?? '';
     const limpo = texto.replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/i, '').trim();
     const resultado = JSON.parse(limpo);
 
-    // Preservar campos de prescrição do foco original — a IA só troca o nome
-    const adaptados = (resultado.exercicios || []).map((aiEx, i) => {
-      const original = exercicios[i] || {};
-      return {
-        nome:         aiEx.nome ?? original.nome,
-        tipo:         original.tipo,          // tipo normalizado do catálogo
-        series:       original.series,
-        reps_min:     original.reps_min,
-        reps_max:     original.reps_max,
-        descanso_seg: original.descanso_seg,
-      };
+    const focos = focosOrdenados.map((focoOriginal, i) => {
+      const aiExercicios = resultado.focos?.[i]?.exercicios || focoOriginal.exercicios;
+      const adaptados = aiExercicios.map((aiEx, j) => {
+        const original = focoOriginal.exercicios[j] || {};
+        return {
+          nome:         aiEx.nome ?? original.nome,
+          tipo:         original.tipo,
+          series:       original.series,
+          reps_min:     original.reps_min,
+          reps_max:     original.reps_max,
+          descanso_seg: original.descanso_seg,
+          duracao_min:  original.duracao_min,
+          intensidade:  original.intensidade,
+        };
+      });
+      return { foco_id: focoOriginal.id, nome: focoOriginal.nome, exercicios_efetivos: adaptados };
     });
 
-    return { exercicios: adaptados, avisos: resultado.avisos || [] };
+    return { focos, avisos: resultado.avisos || [] };
   } catch {
-    return { exercicios, avisos: [] };
+    return {
+      focos: focosOrdenados.map(f => ({
+        foco_id: f.id, nome: f.nome, exercicios_efetivos: f.exercicios,
+      })),
+      avisos: [],
+    };
   }
 }

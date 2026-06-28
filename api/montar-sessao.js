@@ -6,6 +6,8 @@ function normalizar(str) {
   return (str || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 }
 
+const LETRAS = ['A', 'B', 'C'];
+
 module.exports = async function handler(req, res) {
   if (req.method !== 'GET') return res.status(405).json({ erro: 'Método não permitido' });
 
@@ -59,17 +61,19 @@ module.exports = async function handler(req, res) {
 
   if (sessaoCache) {
     return res.status(200).json({
-      exercicios: sessaoCache.exercicios,
-      avisos: sessaoCache.avisos,
-      sessao_id: sessaoCache.id,
-      fonte: 'cache',
-      plano: { id: plano.id, foco_id: plano.foco_id, tipo: plano.tipo },
+      exercicios:   sessaoCache.exercicios,
+      avisos:       sessaoCache.avisos,
+      sessao_id:    sessaoCache.id,
+      treino_label: sessaoCache.treino_label || null,
+      fonte:        'cache',
+      plano:        { id: plano.id, focos: plano.focos, tipo: plano.tipo },
     });
   }
 
   // 4. Construir sessão
   let exerciciosDoDia = [];
   let avisos = [];
+  let treino_label = null;
 
   if (plano.tipo === 'ia_personalizada') {
     const { data: perfil } = await supabase
@@ -81,8 +85,30 @@ module.exports = async function handler(req, res) {
     exerciciosDoDia = resultado.exercicios;
     avisos = resultado.avisos;
   } else {
-    // catalogo: montar pelo pool de exercícios do plano
-    const todos = plano.exercicios_efetivos || [];
+    const focos = plano.focos || [];
+
+    if (!focos.length) {
+      return res.status(500).json({ erro: 'Nenhum foco configurado no plano. Escolha um novo foco.' });
+    }
+
+    let focoAtual;
+
+    if (focos.length === 1) {
+      // Plano único: comportamento idêntico ao anterior, sem rótulo de letra
+      focoAtual = focos[0];
+    } else {
+      // Sequência A/B/C: índice determinado pela contagem de sessões já registradas
+      const { count } = await supabase
+        .from('sessoes_diarias')
+        .select('id', { count: 'exact', head: true })
+        .eq('plano_id', plano.id);
+
+      const indice = (count || 0) % focos.length;
+      focoAtual = focos[indice];
+      treino_label = `Treino ${LETRAS[indice] ?? indice + 1} — ${focoAtual.nome}`;
+    }
+
+    const todos = focoAtual.exercicios_efetivos || [];
 
     if (plano.modo === 'fixo') {
       exerciciosDoDia = todos;
@@ -115,9 +141,9 @@ module.exports = async function handler(req, res) {
 
     // Ajustes determinísticos pelo check-in
     if (checkin.tempo_disponivel_min && checkin.tempo_disponivel_min < 40) {
-      const ancoras    = exerciciosDoDia.filter(e => normalizar(e.tipo) === 'ancora' || normalizar(e.tipo) === 'bloco');
+      const ancorasAdj  = exerciciosDoDia.filter(e => normalizar(e.tipo) === 'ancora' || normalizar(e.tipo) === 'bloco');
       const primeiraVar = exerciciosDoDia.find(e => normalizar(e.tipo) === 'variavel');
-      exerciciosDoDia = primeiraVar ? [...ancoras, primeiraVar] : ancoras;
+      exerciciosDoDia   = primeiraVar ? [...ancorasAdj, primeiraVar] : ancorasAdj;
     }
 
     if (checkin.dormiu_bem === false) {
@@ -128,7 +154,7 @@ module.exports = async function handler(req, res) {
     }
   }
 
-  // Aviso de dor (sempre, independente de tipo de plano)
+  // Aviso de dor (independente do tipo de plano)
   if (checkin.teve_dor) {
     const local = checkin.dor_local ? ` em ${checkin.dor_local}` : '';
     avisos.unshift(`Você reportou dor${local} hoje. Avalie cada exercício — reduza a carga ou pule se sentir desconforto.`);
@@ -139,7 +165,7 @@ module.exports = async function handler(req, res) {
 
   // 5. Salvar sessão gerada
   if (!exerciciosDoDia.length) {
-    console.error('[montar-sessao] exercicios vazio — plano_id:', plano.id, 'tipos:', (plano.exercicios_efetivos || []).map(e => e.tipo));
+    console.error('[montar-sessao] exercicios vazio — plano_id:', plano.id, 'focos:', JSON.stringify(plano.focos));
     return res.status(500).json({ erro: 'Nenhum exercício encontrado para o foco ativo. Escolha um novo foco.' });
   }
 
@@ -151,6 +177,7 @@ module.exports = async function handler(req, res) {
       data: hoje,
       exercicios: exerciciosDoDia,
       avisos,
+      treino_label,
     })
     .select()
     .single();
@@ -158,11 +185,12 @@ module.exports = async function handler(req, res) {
   if (sessaoError) return res.status(500).json({ erro: 'Erro ao salvar sessão' });
 
   return res.status(200).json({
-    exercicios: novaSessao.exercicios,
-    avisos: novaSessao.avisos,
-    sessao_id: novaSessao.id,
-    fonte: 'gerada',
-    plano: { id: plano.id, foco_id: plano.foco_id, tipo: plano.tipo },
+    exercicios:   novaSessao.exercicios,
+    avisos:       novaSessao.avisos,
+    sessao_id:    novaSessao.id,
+    treino_label: novaSessao.treino_label || null,
+    fonte:        'gerada',
+    plano:        { id: plano.id, focos: plano.focos, tipo: plano.tipo },
   });
 };
 

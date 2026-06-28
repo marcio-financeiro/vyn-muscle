@@ -25,7 +25,7 @@
   </nav>
 
   <main class="conteudo">
-    <p id="loading-msg" class="vazio">Carregando...</p>
+    <div id="loading-msg" class="vazio">Carregando...</div>
 
     <!-- FLUXO 1: CHECK-IN RÁPIDO -->
     <div id="fluxo-checkin" style="display:none">
@@ -69,7 +69,9 @@
     <!-- FLUXO 2: SELEÇÃO DE FOCO -->
     <div id="fluxo-selecao" style="display:none">
       <p class="grupo-data">Qual é o foco hoje?</p>
+      <p class="form-label" style="margin-bottom:10px">Selecione 1 a 3 focos em ordem (formam uma sequência A/B/C)</p>
       <div class="foco-grid" id="foco-grid"></div>
+      <button class="btn-cta" id="btn-confirmar-sequencia" type="button" disabled style="display:none;margin-top:4px">Confirmar sequência →</button>
     </div>
 
     <!-- FLUXO 3: SESSÃO DO DIA -->
@@ -123,6 +125,7 @@
       <div id="trocar-foco-container" style="margin-top:32px;border-top:1px solid var(--linha-forte);padding-top:16px">
         <button class="trocar-foco-link" id="btn-trocar-foco" type="button">Trocar foco</button>
         <div class="foco-grid foco-grid-mini" id="foco-grid-troca" style="display:none;margin-top:10px"></div>
+        <button class="btn-cta" id="btn-confirmar-troca" type="button" disabled style="display:none;margin-top:8px">Confirmar sequência →</button>
       </div>
     </div>
   </main>

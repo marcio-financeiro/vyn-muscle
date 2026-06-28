@@ -597,6 +597,7 @@
 .foco-card:hover { border-color: var(--po); }
 .foco-card.ativo { border: 2px solid var(--forja); }
 .foco-card.ia { border: 1px dashed var(--forja); }
+.foco-card.selecionado { border: 2px solid var(--forja); background: color-mix(in srgb, var(--forja) 8%, var(--concreto-2)); }
 
 .foco-badge-ativo {
   position: absolute;
@@ -612,6 +613,57 @@
   padding: 2px 5px;
   border-radius: 3px;
 }
+
+/* Badge de sequência: número da posição A/B/C no card selecionado */
+.foco-badge-seq {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: var(--forja);
+  color: var(--ferro);
+  font-family: var(--fonte-dados);
+  font-size: 11px;
+  font-weight: 700;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Checklist de progresso ── */
+.checklist-progresso {
+  list-style: none;
+  padding: 20px 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--fonte-leitura);
+  font-size: 14px;
+  color: var(--po);
+  transition: color 0.2s;
+}
+
+.checklist-item.concluido { color: var(--cal); }
+
+.checklist-icone {
+  font-family: var(--fonte-dados);
+  font-size: 16px;
+  color: var(--grafite);
+  min-width: 20px;
+  text-align: center;
+  transition: color 0.2s;
+}
+
+.checklist-item.concluido .checklist-icone { color: var(--forja); }
 
 .foco-icone {
   font-size: 24px;
